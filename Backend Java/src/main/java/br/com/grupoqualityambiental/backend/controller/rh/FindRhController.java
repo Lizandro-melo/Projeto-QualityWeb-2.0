@@ -59,9 +59,9 @@ public class FindRhController {
 
     }
 
-    @GetMapping(path = "doc/alert")
+   /* @GetMapping(path = "doc/alert")
     public ResponseEntity<List<DocRhModels>> getAllDocsAlert(@RequestParam("id") Integer idColaborador) {
         List<DocRhModels> listAlert = new ArrayList<>();
-        
-    }
+
+    }*/
 }

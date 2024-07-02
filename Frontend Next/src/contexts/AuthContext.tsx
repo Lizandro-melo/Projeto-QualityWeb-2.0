@@ -80,12 +80,12 @@ export function AuthProvider({children}: { children: ReactNode }) {
             })
             setUser(data.user)
             setAcessos(data.acessos)
-            await new Promise(resolve => setTimeout(resolve, 1000))
+            await new Promise(resolve => setTimeout(resolve, 1500))
             displayLounding.setDisplayReset()
             Router.push("/home")
         }).catch(async () => {
             displayLounding.setDisplayFailure("Nome do usuário ou senha incorreto. Tente novamente.")
-            await new Promise(resolve => setTimeout(resolve, 1000))
+            await new Promise(resolve => setTimeout(resolve, 1500))
             displayLounding.setDisplayReset()
         })
     }

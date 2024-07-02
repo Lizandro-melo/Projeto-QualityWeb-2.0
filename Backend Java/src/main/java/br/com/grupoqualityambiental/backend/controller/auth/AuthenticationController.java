@@ -61,7 +61,7 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<Object> register(@RequestBody @Valid RegisterDTO data) {
-        RegisterDTO loginLizandro = new RegisterDTO("joão silva1", "12345", AuthColaboradorEnum.USER, false);
+        RegisterDTO loginLizandro = new RegisterDTO("josé melo", "415263", AuthColaboradorEnum.USER, false);
         if (this.authColaboradorRepository.findByLogin(loginLizandro.login().toLowerCase()) != null)
             return ResponseEntity.badRequest().body(new ResponseMensagemDTO("Login já existente em nosso banco de dados!"));
 

@@ -19,16 +19,16 @@ export default function Home() {
                                      icon={<MessageCircleQuestion className="w-[20px]"/>} title={"Suporte"}
                                      testeRole={true}/>
                     </NavBar.Section>
-                    <NavBar.Section title={"RH"} testeRole={acessos?.rolesRH.delegado}>
+                    <NavBar.Section title={"RH"} testeRole={acessos?.rolesRH?.delegado}>
                         <NavBar.Item icon={<UserSearch className="w-[20px]"/>} title={"Anotações"}
                                      action={() => Router.push("/rh")}
-                                     testeRole={acessos?.rolesRH.delegado}/>
+                                     testeRole={acessos?.rolesRH?.delegado}/>
                         <NavBar.Item icon={<Folders className="w-[20px]"/>} title={"Arquivos"}
                                      action={() => {
                                          Router.push("/rh")
                                          selectPage.setPage("Arquivos")
                                      }}
-                                     testeRole={acessos?.rolesRH.delegado}/>
+                                     testeRole={acessos?.rolesRH?.delegado}/>
                     </NavBar.Section>
                 </NavBar.Root>
                 <ContainerContext.Root/>
