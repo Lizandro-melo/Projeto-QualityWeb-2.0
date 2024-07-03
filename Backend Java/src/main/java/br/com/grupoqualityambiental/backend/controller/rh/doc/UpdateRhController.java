@@ -1,6 +1,6 @@
-package br.com.grupoqualityambiental.backend.controller.rh;
+package br.com.grupoqualityambiental.backend.controller.rh.doc;
 
-import br.com.grupoqualityambiental.backend.service.rh.UpdateRhService;
+import br.com.grupoqualityambiental.backend.service.rh.doc.UpdateRhService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

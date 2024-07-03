@@ -1,4 +1,4 @@
-package br.com.grupoqualityambiental.backend.service.rh;
+package br.com.grupoqualityambiental.backend.service.rh.doc;
 
 import br.com.grupoqualityambiental.backend.exception.ti.IntegridadeDadosTiException;
 import br.com.grupoqualityambiental.backend.models.rh.DocRhModels;
@@ -6,8 +6,6 @@ import br.com.grupoqualityambiental.backend.repository.rh.DocRhRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class CreateRhService {
