@@ -1,4 +1,4 @@
-package br.com.grupoqualityambiental.backend.dto.colaborador.auth;
+package br.com.grupoqualityambiental.backend.dto.auth;
 
 import br.com.grupoqualityambiental.backend.enumerated.colaborador.AuthColaboradorEnum;
 

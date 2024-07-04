@@ -1,11 +1,9 @@
 package br.com.grupoqualityambiental.backend.service.websocket;
 
-import br.com.grupoqualityambiental.backend.dto.colaborador.ti.MensagemTiDTO;
-import br.com.grupoqualityambiental.backend.dto.colaborador.ti.RequestSocketSolicitacaoDTO;
-import br.com.grupoqualityambiental.backend.dto.colaborador.ti.ResponseSocketSolicitacaoTiDTO;
-import br.com.grupoqualityambiental.backend.dto.colaborador.ti.SolicitacaoTiDTO;
+import br.com.grupoqualityambiental.backend.dto.ti.MensagemTiDTO;
+import br.com.grupoqualityambiental.backend.dto.ti.ResponseSocketSolicitacaoTiDTO;
+import br.com.grupoqualityambiental.backend.dto.ti.SolicitacaoTiDTO;
 import br.com.grupoqualityambiental.backend.models.ti.MensagemTiModels;
-import br.com.grupoqualityambiental.backend.models.ti.SolicitacaoTiModels;
 import br.com.grupoqualityambiental.backend.repository.colaborador.InfoColaboradorRepository;
 import br.com.grupoqualityambiental.backend.repository.ti.MensagemTiRepository;
 import br.com.grupoqualityambiental.backend.repository.ti.SolicitacaoTiRepository;

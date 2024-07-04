@@ -1,4 +1,4 @@
-package br.com.grupoqualityambiental.backend.dto.colaborador.ti;
+package br.com.grupoqualityambiental.backend.dto.ti;
 
 import br.com.grupoqualityambiental.backend.enumerated.colaborador.SolicitacaoTiEnum;
 import br.com.grupoqualityambiental.backend.models.colaborador.InfoColaboradorModel;

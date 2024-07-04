@@ -1,4 +1,4 @@
-package br.com.grupoqualityambiental.backend.dto.colaborador.auth;
+package br.com.grupoqualityambiental.backend.dto.auth;
 
 public record AuthenticationDTO(String login, String password) {
 }

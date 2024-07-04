@@ -1,4 +1,4 @@
-package br.com.grupoqualityambiental.backend.dto.colaborador.ti;
+package br.com.grupoqualityambiental.backend.dto.ti;
 
 public record RequestClassificarDTO(Integer referentGrupo,
                                     Integer referentCategoria,

@@ -9,17 +9,17 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/c
 import {Input} from "@/components/ui/input";
 import {
     colaboradorSelectGlobal,
-    colaboradorSelectGlobalProps,
-    stateLoundingGlobal,
-    stateModalImportDocRhGlobal
+    colaboradorSelectGlobalProps, pageSelectProps,
+    stateLoundingGlobal, stateModalDocExistenteProps, stateModalImportDocExistenteRhGlobal,
+    stateModalImportDocRhGlobal, stateModalProps
 } from "@/lib/globalStates";
-import {DocRhModels} from "@/lib/models";
+import {DocRhModels, SubstituirDocRhDTO, TipoDocRhDTO} from "@/lib/models";
 import {useForm} from "react-hook-form";
 import {cn} from "@/lib/utils";
 import {Label} from "@/components/ui/label";
 import axios from "axios";
 import {AuthContext} from "@/contexts/AuthContext";
-import {useQueryClient} from "react-query";
+import {useQuery, useQueryClient} from "react-query";
 import Router from "next/router";
 
 
@@ -40,90 +40,88 @@ type filterProps = {
 
 function ArquivosReferents() {
     const queryClient = useQueryClient();
-    const state = stateModalImportDocRhGlobal((state) => state)
-    const colaboradorSelect = colaboradorSelectGlobal<colaboradorSelectGlobalProps>((state: any) => state)
-    const [docs, setDocs] = useState<DocRhModels[]>()
+    const state = stateModalImportDocRhGlobal((state) => state);
+    const {colaborador} = colaboradorSelectGlobal<colaboradorSelectGlobalProps>((state: any) => state);
     const {host} = useContext(AuthContext);
-    const [filter, setFilter] = useState<filterProps>({
-        apelido: "",
-        tipo: ""
-    })
+    const [filter, setFilter] = useState<filterProps>({apelido: "", tipo: ""});
 
-    useEffect(() => {
-        if (!colaboradorSelect.colaborador?.fkAuth || !host) {
-            return
-        }
-        getDocs()
-    }, [colaboradorSelect.colaborador?.fkAuth, host])
-
-    useEffect(() => {
-        applyFilter()
-    }, [filter]);
-
-    const getDocs = () => {
-        axios.get(`${host}/rh/find/doc?id=${colaboradorSelect.colaborador?.fkAuth}`).then((response) => {
-            const newList = response.data.map((doc: DocRhModels) => {
-                switch (doc.tipo) {
-                    case "IDENTIDADE":
-                        doc.tipo = "Identidade"
-                        break
-                    case "TITULOELEITOR":
-                        doc.tipo = "Título de eleitor"
-                        break
-                    case "COMPROVANTERESIDENCIA":
-                        doc.tipo = "Comprovante de residencia"
-                        break
-                    case "EXAMECOMPLEMENTAR":
-                        doc.tipo = "Exame Complementar"
-                        break
-                    case "DECLARACAO":
-                        doc.tipo = "Declaração"
-                        break
-                    case "CONTRATO":
-                        doc.tipo = "Contrato"
-                        break
-                }
-                return doc;
-            })
-            setDocs(newList)
-        })
-    }
+    const {data: docs, refetch: refetchDocs} = useQuery({
+        queryKey: ["docsRh"],
+        queryFn: async () => {
+            try {
+                const response = await axios.get(`${host}/rh/find/doc?id=${colaborador?.fkAuth}`);
+                return response.data.map((doc: DocRhModels) => {
+                    switch (doc.tipo) {
+                        case "IDENTIDADE":
+                            doc.tipo = "Identidade";
+                            break;
+                        case "TITULOELEITOR":
+                            doc.tipo = "Título de eleitor";
+                            break;
+                        case "COMPROVANTERESIDENCIA":
+                            doc.tipo = "Comprovante de residencia";
+                            break;
+                        case "EXAMECOMPLEMENTAR":
+                            doc.tipo = "Exame Complementar";
+                            break;
+                        case "DECLARACAO":
+                            doc.tipo = "Declaração";
+                            break;
+                        case "CONTRATO":
+                            doc.tipo = "Contrato";
+                            break;
+                    }
+                    return doc;
+                });
+            } catch (error) {
+                return null;
+            }
+        },
+        enabled: !!colaborador?.fkAuth && !!host
+    });
 
     const alterFilter = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-        const {name, value} = e.target
+        const {name, value} = e.target;
         setFilter((prevState: any) => ({
             ...prevState,
             [name]: value
-        }))
-    }, [])
+        }));
+    }, []);
 
     const applyFilter = useCallback(() => {
-        if (!colaboradorSelect.colaborador?.fkAuth || !host) {
-            return
-        }
-        const filteredData = docs?.filter((doc) => {
+        if (!docs) return;
+
+        const filteredData = docs.filter((doc: DocRhModels) => {
             return (
-                (filter?.apelido ? doc.apelido?.toLowerCase().includes(filter.apelido.toLowerCase()) : true) &&
-                (filter?.tipo ? doc.tipo?.toLowerCase().includes(filter.tipo.toLowerCase()) : true)
+                (filter.apelido ? doc.apelido?.toLowerCase().includes(filter.apelido.toLowerCase()) : true) &&
+                (filter.tipo ? doc.tipo?.toLowerCase().includes(filter.tipo.toLowerCase()) : true)
             );
         });
-        if (filteredData?.length === 0) {
-            getDocs()
-            return
-        }
-        if (filter?.apelido === "" && filter?.tipo === "") {
-            getDocs()
-            return
-        }
 
-        setDocs(filteredData)
+        queryClient.setQueryData(["docsRh"], filteredData);
 
-    }, [filter, docs, queryClient]);
+        if (filteredData.length === 0) {
+            refetchDocs();
+        }
+        if (filter.tipo === "" && filter.apelido === "") {
+            refetchDocs();
+        }
+    }, [docs, filter.apelido, filter.tipo, refetchDocs]);
+
+    useEffect(() => {
+        applyFilter();
+    }, [filter]);
+
+    useEffect(() => {
+        if (colaborador?.fkAuth && host) {
+            refetchDocs();
+        }
+    }, [colaborador?.fkAuth, host, refetchDocs]);
 
 
     return (
         <>
-            {colaboradorSelect.colaborador && (
+            {colaborador && (
                 <>
                     <ModalImportDocument/>
                     <div className="h-full w-[80%] rounded-r-md">
@@ -132,10 +130,10 @@ function ArquivosReferents() {
                                 <div className="flex justify-between items-center bg-stone-300 rounded-full">
                                     <Avatar>
                                         <AvatarImage
-                                            src={colaboradorSelect.colaborador?.dirFoto ? colaboradorSelect.colaborador?.dirFoto : 'https://placehold.co/600?text=Foto'}/>
+                                            src={colaborador?.dirFoto ? colaborador?.dirFoto : 'https://placehold.co/600?text=Foto'}/>
                                     </Avatar>
                                     <span
-                                        className="text-center text-sm mx-5">{colaboradorSelect.colaborador?.nomeCompleto}</span>
+                                        className="text-center text-sm mx-5">{colaborador?.nomeCompleto}</span>
                                 </div>
                                 <p className="text-stone-500 text-xs">Coloque o mouse por cima do documento para
                                     pré-visualizalo</p>
@@ -234,15 +232,14 @@ function ArquivosReferents() {
 }
 
 function ModalImportDocument() {
-
     const state = stateModalImportDocRhGlobal((state) => state)
     const colaboradorSelect = colaboradorSelectGlobal<colaboradorSelectGlobalProps>((state: any) => state)
-
-    const [doc, setDoc] = useState<DocRhModels>()
+    const stateImportDocExistente = stateModalImportDocExistenteRhGlobal<stateModalDocExistenteProps>((state) => state)
     const {register, handleSubmit, reset} = useForm()
     const [requeredVencimento, setRequeredVencimento] = useState(false)
     const {host} = useContext(AuthContext);
     const displayLounding = stateLoundingGlobal((state: any) => state);
+    const [doc, setDoc] = useState<DocRhModels>()
 
 
     const updateFile = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -252,20 +249,24 @@ function ModalImportDocument() {
         if (e.target.files) {
             formData.append("file", e.target.files[0]);
         }
-        formData.append("dir", `C:/Users/paralamas/Desktop/qualityweb2/public/assets/rh/doc/${colaboradorSelect.colaborador?.nomeCompleto}`);
-        try {
-            const response = await axios.post(`${host}/rh/update/doc`, formData);
+        formData.append("dir", `C:/Users/paralamas/Desktop/Projeto QualityWeb 2.0/Frontend Next/public/assets/rh/doc/${colaboradorSelect.colaborador?.nomeCompleto}`);
+
+        await axios.post(`${host}/rh/update/doc`, formData).then(async (response) => {
             setDoc((prevState: any) => ({
                 ...prevState,
                 dir: `/assets/rh/doc/${colaboradorSelect.colaborador?.nomeCompleto}/${response.data}`
             }))
             displayLounding.setDisplaySuccess("Importado")
+            await new Promise((resolve) => setTimeout(resolve, 1500));
             displayLounding.setDisplayReset()
-        } catch (error) {
+        }).catch(async () => {
             displayLounding.setDisplayFailure("Falha ao enviar o arquivo")
+            await new Promise((resolve) => setTimeout(resolve, 1500));
             displayLounding.setDisplayReset()
             throw new Error("Falha ao enviar o arquivo");
-        }
+        });
+
+
     };
 
     const enviarDoc = async (data: any) => {
@@ -281,21 +282,24 @@ function ModalImportDocument() {
             await new Promise((resolve) => setTimeout(resolve, 1500));
             state.alterState()
             displayLounding.setDisplayReset()
-            reset()
             setDoc((prevState: any) => ({
                 ...prevState,
                 dir: null,
                 tipo: ""
             }))
+            reset()
+
         }).catch(async (erro) => {
-            displayLounding.setDisplayFailure(erro.response.data)
-            await new Promise((resolve) => setTimeout(resolve, 2000));
             displayLounding.setDisplayReset()
+            const response: TipoDocRhDTO = erro.response.data
+            stateImportDocExistente.setDados(response.tipo, response.doc, document)
+            stateImportDocExistente.alterState()
         })
     }
 
     return (
         <>
+            <ModalImportDocExistentes/>
             <Dialog open={state.stateModal} onOpenChange={state.alterState}>
                 <DialogContent className="!max-w-[60rem] min-h-[60%]">
                     <DialogHeader>
@@ -350,7 +354,6 @@ function ModalImportDocument() {
                                     </div>
                                     <Label>Tipo de documento</Label>
                                     <select
-                                        value={doc?.tipo}
                                         className="flex h-10 w-full rounded-md border !border-stone-600 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50" {...register("tipo")}
                                         id={"tipos"} name={"tipo"}
                                         required={true}>
@@ -404,6 +407,55 @@ function ModalImportDocument() {
                                     Enviar
                                 </Button>
                             </form>
+                        </div>
+                    </DialogHeader>
+                </DialogContent>
+            </Dialog>
+        </>
+    )
+}
+
+function ModalImportDocExistentes() {
+    const state = stateModalImportDocExistenteRhGlobal<stateModalDocExistenteProps>((state) => state)
+    const {host} = useContext(AuthContext);
+
+    const substituirDoc = () => {
+        const docs: SubstituirDocRhDTO = {
+            docExistente: state.docExistente,
+            docSubstituto: state.docReferent
+        }
+    }
+
+    return (
+        <>
+            <Dialog open={state.stateModal} onOpenChange={state.alterState}>
+                <DialogContent className="!max-w-[40rem] min-h-[20rem]">
+                    <DialogHeader>
+                        <DialogTitle>Atenção</DialogTitle>
+                        <DialogDescription>Já existe {state.tipo} vinculado a esté colaborador, deseja
+                            substitui-lo?</DialogDescription>
+                        <div className="border rounded-xl p-5 w-full h-full flex flex-col gap-3">
+                            <h3 className="text-base">Documento existente</h3>
+                            <span
+                                className="text-xs text-stone-500">Você pode baixar o documento para visualizar!</span>
+                            <Button type="button" variant="ghost"
+                                    onClick={() => {
+                                        Router.push(`${host}/rh/find/download/arquivo?name=${state.docExistente?.dir?.split("/")[4]}/${state.docExistente?.dir?.split("/")[5]}`, "", {
+                                            scroll: true
+                                        })
+                                    }}
+                                    className="border w-[50%] h-[70px] rounded-md flex justify-start gap-4">
+                                <FileText className=""/>
+                                <span>{state.docExistente?.apelido}</span>
+                            </Button>
+                            <div className="flex gap-2">
+                                <Button onClick={substituirDoc} type="button">
+                                    Substituir
+                                </Button>
+                                <Button onClick={state.alterState} variant="link" type="button">
+                                    Cancelar
+                                </Button>
+                            </div>
                         </div>
                     </DialogHeader>
                 </DialogContent>

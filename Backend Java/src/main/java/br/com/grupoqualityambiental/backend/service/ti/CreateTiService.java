@@ -1,11 +1,9 @@
 package br.com.grupoqualityambiental.backend.service.ti;
 
-import br.com.grupoqualityambiental.backend.dto.colaborador.ti.MensagemTiDTO;
-import br.com.grupoqualityambiental.backend.dto.colaborador.ti.RequestClassificarDTO;
-import br.com.grupoqualityambiental.backend.dto.colaborador.ti.RequestMensagemTiDTO;
-import br.com.grupoqualityambiental.backend.enumerated.colaborador.MensagemTiEnum;
+import br.com.grupoqualityambiental.backend.dto.ti.RequestClassificarDTO;
+import br.com.grupoqualityambiental.backend.dto.ti.RequestMensagemTiDTO;
 import br.com.grupoqualityambiental.backend.enumerated.colaborador.SolicitacaoTiEnum;
-import br.com.grupoqualityambiental.backend.exception.ti.IntegridadeDadosTiException;
+import br.com.grupoqualityambiental.backend.exception.IntegridadeDadosTiException;
 import br.com.grupoqualityambiental.backend.models.ti.ClassificacaoTiModels;
 import br.com.grupoqualityambiental.backend.models.ti.MensagemTiModels;
 import br.com.grupoqualityambiental.backend.models.ti.SolicitacaoTiModels;

@@ -1,11 +1,11 @@
 package br.com.grupoqualityambiental.backend.controller.auth;
 
 import br.com.grupoqualityambiental.backend.config.security.TokenService;
-import br.com.grupoqualityambiental.backend.dto.colaborador.auth.AuthenticationDTO;
-import br.com.grupoqualityambiental.backend.dto.colaborador.auth.LoginResponseDTO;
-import br.com.grupoqualityambiental.backend.dto.colaborador.auth.RegisterDTO;
-import br.com.grupoqualityambiental.backend.dto.colaborador.auth.RevalidateResponseDTO;
-import br.com.grupoqualityambiental.backend.dto.colaborador.essential.ResponseMensagemDTO;
+import br.com.grupoqualityambiental.backend.dto.auth.AuthenticationDTO;
+import br.com.grupoqualityambiental.backend.dto.auth.LoginResponseDTO;
+import br.com.grupoqualityambiental.backend.dto.auth.RegisterDTO;
+import br.com.grupoqualityambiental.backend.dto.auth.RevalidateResponseDTO;
+import br.com.grupoqualityambiental.backend.dto.essential.ResponseMensagemDTO;
 import br.com.grupoqualityambiental.backend.enumerated.colaborador.AuthColaboradorEnum;
 import br.com.grupoqualityambiental.backend.models.acesso.AcessoModel;
 import br.com.grupoqualityambiental.backend.models.colaborador.AuthColaboradorModel;

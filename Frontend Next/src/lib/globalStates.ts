@@ -1,6 +1,6 @@
 import {create} from "zustand"
 import {
-    AcessoModel, InfoColaborador,
+    AcessoModel, DocRhModels, InfoColaborador,
     MensagemTiDTO,
     ResponseSocketSolicitacaoTiDTO,
     SolicitcaoTiDTO
@@ -154,6 +154,29 @@ export const stateModalImportDocRhGlobal = create<stateModalProps>((set) => ({
     alterState: () => set((state) => ({
         stateModal: !state.stateModal,
     }))
+}))
+
+export type stateModalDocExistenteProps = {
+    stateModal: boolean
+    tipo: string
+    docExistente: DocRhModels | null
+    docReferent: DocRhModels | null
+    alterState: () => void
+    setDados: (tipo: string, docExistente: DocRhModels, docReferent: DocRhModels) => void
+}
+export const stateModalImportDocExistenteRhGlobal = create<stateModalDocExistenteProps>((set) => ({
+    stateModal: true,
+    docExistente: null,
+    docReferent: null,
+    tipo: "",
+    alterState: () => set((state) => ({
+        stateModal: !state.stateModal,
+    })),
+    setDados: (tipo: string, docExistente: DocRhModels, docReferent: DocRhModels) => set((state) => ({
+        tipo: tipo,
+        docReferent: docReferent,
+        docExistente: docExistente
+    })),
 }))
 
 export type pageSelectProps = {

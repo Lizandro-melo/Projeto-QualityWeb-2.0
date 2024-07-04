@@ -1,6 +1,10 @@
 package br.com.grupoqualityambiental.backend.service.ti;
 
-import br.com.grupoqualityambiental.backend.dto.colaborador.ti.*;
+
+import br.com.grupoqualityambiental.backend.dto.ti.MensagemTiDTO;
+import br.com.grupoqualityambiental.backend.dto.ti.ResponseSocketSolicitacaoTiDTO;
+import br.com.grupoqualityambiental.backend.dto.ti.SolicitacaoTiDTO;
+import br.com.grupoqualityambiental.backend.dto.ti.SolicitacaoTiWithMotivoDTO;
 import br.com.grupoqualityambiental.backend.enumerated.colaborador.SolicitacaoTiEnum;
 import br.com.grupoqualityambiental.backend.models.colaborador.InfoColaboradorModel;
 import br.com.grupoqualityambiental.backend.models.ti.*;

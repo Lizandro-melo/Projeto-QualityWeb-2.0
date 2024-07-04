@@ -1,8 +1,7 @@
 package br.com.grupoqualityambiental.backend.models.ti;
 
-import br.com.grupoqualityambiental.backend.dto.colaborador.ti.RequestMensagemTiDTO;
+import br.com.grupoqualityambiental.backend.dto.ti.RequestMensagemTiDTO;
 import br.com.grupoqualityambiental.backend.enumerated.colaborador.MensagemTiEnum;
-import br.com.grupoqualityambiental.backend.models.colaborador.InfoColaboradorModel;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -1,10 +1,9 @@
 package br.com.grupoqualityambiental.backend.controller.ti;
 
-import br.com.grupoqualityambiental.backend.dto.colaborador.ti.ResponseSocketSolicitacaoTiDTO;
-import br.com.grupoqualityambiental.backend.dto.colaborador.ti.SolicitacaoTiDTO;
-import br.com.grupoqualityambiental.backend.dto.colaborador.ti.SolicitacaoTiWithMotivoDTO;
+import br.com.grupoqualityambiental.backend.dto.ti.ResponseSocketSolicitacaoTiDTO;
+import br.com.grupoqualityambiental.backend.dto.ti.SolicitacaoTiDTO;
+import br.com.grupoqualityambiental.backend.dto.ti.SolicitacaoTiWithMotivoDTO;
 import br.com.grupoqualityambiental.backend.models.ti.CategoriaClassificacaoTiModels;
-import br.com.grupoqualityambiental.backend.models.ti.ClassificacaoTiModels;
 import br.com.grupoqualityambiental.backend.models.ti.GrupoClassificacaoTiModels;
 import br.com.grupoqualityambiental.backend.models.ti.SubcategoriaTiModels;
 import br.com.grupoqualityambiental.backend.service.ti.FindTiService;

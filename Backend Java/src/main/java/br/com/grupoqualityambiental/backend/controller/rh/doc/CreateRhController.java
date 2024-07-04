@@ -1,6 +1,7 @@
 package br.com.grupoqualityambiental.backend.controller.rh.doc;
 
-import br.com.grupoqualityambiental.backend.exception.ti.IntegridadeDadosTiException;
+import br.com.grupoqualityambiental.backend.exception.IntegridadeDadosTiException;
+import br.com.grupoqualityambiental.backend.exception.rh.DocExistenteException;
 import br.com.grupoqualityambiental.backend.models.rh.DocRhModels;
 import br.com.grupoqualityambiental.backend.service.rh.doc.CreateRhService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +21,11 @@ public class CreateRhController {
     @PostMapping(
             path = "doc"
     )
-    public ResponseEntity<String> getAllDocsColaborador(@RequestBody DocRhModels doc) {
+    public ResponseEntity<Object> getAllDocsColaborador(@RequestBody DocRhModels doc) {
         try {
             return ResponseEntity.ok(createRhService.insertDoc(doc));
-        } catch (IntegridadeDadosTiException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (DocExistenteException e) {
+            return ResponseEntity.badRequest().body(e.sendTipoDoc());
         }
     }
 }

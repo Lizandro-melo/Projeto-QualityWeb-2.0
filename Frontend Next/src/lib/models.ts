@@ -150,3 +150,13 @@ export type DocRhModels = {
     referentColaborador: number | undefined
     apelido: string
 }
+
+export type TipoDocRhDTO = {
+    tipo: string
+    doc: DocRhModels
+}
+
+export type SubstituirDocRhDTO = {
+    docExistente: DocRhModels | null,
+    docSubstituto: DocRhModels | null
+}
