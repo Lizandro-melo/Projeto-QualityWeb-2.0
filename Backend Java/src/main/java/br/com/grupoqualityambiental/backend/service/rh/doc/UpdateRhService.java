@@ -1,5 +1,6 @@
 package br.com.grupoqualityambiental.backend.service.rh.doc;
 
+import br.com.grupoqualityambiental.backend.dto.rh.SubstituirDocRhDTO;
 import br.com.grupoqualityambiental.backend.repository.rh.DocRhRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,5 +28,11 @@ public class UpdateRhService {
             System.out.println(e.getMessage());
             return "";
         }
+    }
+
+    public String substituirDocExistente(SubstituirDocRhDTO docs) {
+        docRhRepository.delete(docs.docExistente());
+        docRhRepository.save(docs.docSubstituto());
+        return "Documento substituido com sucesso!";
     }
 }

@@ -1,5 +1,6 @@
 package br.com.grupoqualityambiental.backend.controller.rh.doc;
 
+import br.com.grupoqualityambiental.backend.dto.rh.DocExpirandoAlertRhDTO;
 import br.com.grupoqualityambiental.backend.models.rh.DocRhModels;
 import br.com.grupoqualityambiental.backend.service.rh.doc.FindRhService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -56,9 +58,8 @@ public class FindRhController {
 
     }
 
-   /* @GetMapping(path = "doc/alert")
-    public ResponseEntity<List<DocRhModels>> getAllDocsAlert(@RequestParam("id") Integer idColaborador) {
-        List<DocRhModels> listAlert = new ArrayList<>();
-
-    }*/
+    @GetMapping(path = "doc/alert")
+    public ResponseEntity<List<DocExpirandoAlertRhDTO>> getAllDocsAlert(@RequestParam("id") Integer idColaborador) {
+        return ResponseEntity.ok(findRhService.getAllDocsExpirates(idColaborador));
+    }
 }

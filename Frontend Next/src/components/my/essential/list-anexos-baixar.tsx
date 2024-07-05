@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/context-menu"
 import {cn} from "@/lib/utils";
 import {AuthContext} from "@/contexts/AuthContext";
+import axios from "axios";
+import {stateLoundingGlobal} from "@/lib/globalStates";
 
 
 type List = {
@@ -19,6 +21,7 @@ type List = {
 export default function ListAnexosBaixar({list, height}: List) {
 
     const {host} = useContext(AuthContext)
+    const displayLounding = stateLoundingGlobal((state: any) => state);
 
     return (
         <div
@@ -29,7 +32,18 @@ export default function ListAnexosBaixar({list, height}: List) {
                     const fileName = anexo.split("/")[1]
                     return (
                         <a key={i}
-                           href={`${host}/suporte/find/download/arquivo?name=${fileName}`}
+                           onClick={async () => {
+                               displayLounding.setDisplayLounding();
+                               await axios.get(`${host}/suporte/find/download/arquivo?name=${fileName}`).then(() => {
+                                   displayLounding.setDisplaySuccess("Baixado");
+                                   location.href = `${host}/suporte/find/download/arquivo?name=${fileName}`
+                                   displayLounding.setDisplayReset();
+                               }).catch(async () => {
+                                   displayLounding.setDisplayFailure("Este documento já não existe mais!");
+                                   await new Promise((resolve) => setTimeout(resolve, 2000));
+                                   displayLounding.setDisplayReset();
+                               })
+                           }}
                            title={fileName}
                            target="_blank"
                            className="border border-stone-500 h-[65px] w-[65px] flex flex-col items-center justify-center flex-none rounded-md cursor-pointer hover:bg-slate-100">

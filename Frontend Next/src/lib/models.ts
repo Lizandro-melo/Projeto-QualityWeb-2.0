@@ -141,7 +141,7 @@ export type CategoriaClassificacaoTiModels = {
 }
 
 export type DocRhModels = {
-    id?: number
+    id?: number | undefined
     dir?: string
     tipo?: string
     dataVencimento?: string
@@ -159,4 +159,9 @@ export type TipoDocRhDTO = {
 export type SubstituirDocRhDTO = {
     docExistente: DocRhModels | null,
     docSubstituto: DocRhModels | null
+}
+
+export type DocExpirandoAlertRhDTO = {
+    doc: DocRhModels | null,
+    diasRestantes: number
 }

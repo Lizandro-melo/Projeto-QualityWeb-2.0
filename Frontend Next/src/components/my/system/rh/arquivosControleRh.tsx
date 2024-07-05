@@ -1,7 +1,7 @@
 import ListColaboradoresAtivos from "@/components/my/essential/ListColaboradoresAtivos";
-import React, {ChangeEvent, useCallback, useContext, useEffect, useState} from "react";
+import React, {ChangeEvent, useCallback, useContext, useEffect, useRef, useState} from "react";
 import {Avatar, AvatarImage} from "@/components/ui/avatar";
-import {FileText, Plus} from "lucide-react";
+import {FileText, Image, Plus, RotateCcw, RotateCw, Sheet} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {ScrollArea} from "@/components/ui/scroll-area";
@@ -21,6 +21,7 @@ import axios from "axios";
 import {AuthContext} from "@/contexts/AuthContext";
 import {useQuery, useQueryClient} from "react-query";
 import Router from "next/router";
+import {ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger} from "@/components/ui/context-menu";
 
 
 export default function ArquivosControleRh() {
@@ -44,8 +45,7 @@ function ArquivosReferents() {
     const {colaborador} = colaboradorSelectGlobal<colaboradorSelectGlobalProps>((state: any) => state);
     const {host} = useContext(AuthContext);
     const [filter, setFilter] = useState<filterProps>({apelido: "", tipo: ""});
-
-    const {data: docs, refetch: refetchDocs} = useQuery({
+    const {data: docs, refetch: refetchDocs} = useQuery<DocRhModels[]>({
         queryKey: ["docsRh"],
         queryFn: async () => {
             try {
@@ -79,46 +79,80 @@ function ArquivosReferents() {
         },
         enabled: !!colaborador?.fkAuth && !!host
     });
+    const {data: docsAlert, refetch: refetchDocsAlert} = useQuery<DocRhModels[]>({
+        queryKey: ["docsAlert"],
+        queryFn: async () => {
+            try {
+                const response = await axios.get(`${host}/rh/find/doc/alert?id=${colaborador?.fkAuth}`);
+                return response.data.doc.map((doc: DocRhModels) => {
+                    switch (doc.tipo) {
+                        case "IDENTIDADE":
+                            doc.tipo = "Identidade";
+                            break;
+                        case "TITULOELEITOR":
+                            doc.tipo = "Título de eleitor";
+                            break;
+                        case "COMPROVANTERESIDENCIA":
+                            doc.tipo = "Comprovante de residencia";
+                            break;
+                        case "EXAMECOMPLEMENTAR":
+                            doc.tipo = "Exame Complementar";
+                            break;
+                        case "DECLARACAO":
+                            doc.tipo = "Declaração";
+                            break;
+                        case "CONTRATO":
+                            doc.tipo = "Contrato";
+                            break;
+                    }
+                    return doc;
+                });
+            } catch (error) {
+                return null;
+            }
+        },
+        enabled: !!colaborador?.fkAuth && !!host
+    });
 
-    const alterFilter = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-        const {name, value} = e.target;
-        setFilter((prevState: any) => ({
-            ...prevState,
-            [name]: value
-        }));
-    }, []);
-
-    const applyFilter = useCallback(() => {
-        if (!docs) return;
-
-        const filteredData = docs.filter((doc: DocRhModels) => {
-            return (
-                (filter.apelido ? doc.apelido?.toLowerCase().includes(filter.apelido.toLowerCase()) : true) &&
-                (filter.tipo ? doc.tipo?.toLowerCase().includes(filter.tipo.toLowerCase()) : true)
-            );
-        });
-
-        queryClient.setQueryData(["docsRh"], filteredData);
-
-        if (filteredData.length === 0) {
-            refetchDocs();
-        }
-        if (filter.tipo === "" && filter.apelido === "") {
-            refetchDocs();
-        }
-    }, [docs, filter.apelido, filter.tipo, refetchDocs]);
-
-    useEffect(() => {
-        applyFilter();
-    }, [filter]);
 
     useEffect(() => {
         if (colaborador?.fkAuth && host) {
             refetchDocs();
         }
-    }, [colaborador?.fkAuth, host, refetchDocs]);
+    }, [colaborador?.fkAuth]);
 
 
+    const applyFilter = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+        if (!docs) return;
+
+        const {name, value} = e.target;
+
+        const filteredData = docs.filter((doc: DocRhModels) => {
+            return (
+                (name === "apelido" ? doc.apelido?.toLowerCase().includes(value.toLowerCase()) : true) &&
+                (name === "tipo" ? doc.tipo?.toLowerCase().includes(value.toLowerCase()) : true)
+            );
+        });
+
+        setFilter((prevState: any) => ({
+            ...prevState,
+            [name]: value
+        }));
+
+        queryClient.setQueryData(["docsRh"], filteredData);
+
+        if (filteredData.length === 0) {
+            console.log('No data found, refetching...');
+            if (filter.tipo === "" && filter.apelido === "") {
+                refetchDocs()
+            }
+        }
+
+
+    }, [docs, filter.apelido, filter.tipo, queryClient, refetchDocs]);
+
+
+    // @ts-ignore
     return (
         <>
             {colaborador && (
@@ -127,6 +161,7 @@ function ArquivosReferents() {
                     <div className="h-full w-[80%] rounded-r-md">
                         <div className="flex justify-start w-full p-5 flex-col h-full">
                             <div className="w-full flex justify-start mb-5 items-center gap-5">
+
                                 <div className="flex justify-between items-center bg-stone-300 rounded-full">
                                     <Avatar>
                                         <AvatarImage
@@ -137,18 +172,25 @@ function ArquivosReferents() {
                                 </div>
                                 <p className="text-stone-500 text-xs">Coloque o mouse por cima do documento para
                                     pré-visualizalo</p>
+                                <Button type="button"
+                                        className="rounded-full w-[40px] h-[40px] p-[10px] hover:animate-spin-reload transition-all"
+                                        onClick={() => refetchDocs()}
+                                >
+                                    <RotateCw/>
+                                </Button>
                             </div>
+
                             <ScrollArea
                                 className="h-[60%] w-full rounded-md border relative overflow-y-scroll scrowInvivel">
                                 <div className="p-3 absolute w-full">
                                     <h4 className="mb-4 text-sm font-medium leading-none">Documentos</h4>
-                                    <Table>
-                                        <TableHeader className="text-xs">
+                                    <Table className="relative">
+                                        <TableHeader className="text-xs sticky top-0">
                                             <TableHead>
                                                 <Input
                                                     className="border-none bg-transparent focus-visible:!ring-0 text-xs"
                                                     placeholder="Apelido" type="text" name="apelido"
-                                                    onChange={alterFilter}
+                                                    onChange={applyFilter}
                                                 />
                                             </TableHead>
                                             <TableHead>
@@ -156,7 +198,7 @@ function ArquivosReferents() {
                             <Input className="border-none bg-transparent focus-visible:!ring-0 text-xs"
                                    placeholder="Tipo de documento"
                                    type="text" name="tipo"
-                                   list="tipos" onChange={alterFilter}/>
+                                   list="tipos" onChange={applyFilter}/>
                                             <datalist id="tipos">
                                             <option value="Identidade">Identidade</option>
                                             <option value="CPF">CPF</option>
@@ -175,10 +217,15 @@ function ArquivosReferents() {
                                             <TableHead>
                                                 Data de vencimento
                                             </TableHead>
+                                            <TableHead>
+                                                Deletar
+                                            </TableHead>
 
                                         </TableHeader>
                                         <TableBody>
-                                            {docs?.map((doc: DocRhModels) => {
+                                            {docs?.sort((a, b) => {
+                                                return a.apelido! >= b.apelido! ? 1 : -1;
+                                            }).map((doc: DocRhModels) => {
                                                 const fileName = `${doc.dir?.split("/")[4]}/${doc.dir?.split("/")[5]}`
                                                 return (
                                                     <>
@@ -213,12 +260,36 @@ function ArquivosReferents() {
                                     <Table>
                                         <TableHeader>
                                             <TableHead>
+                                                Apelido
+                                            </TableHead>
+                                            <TableHead>
                                                 Tipo de documento
                                             </TableHead>
                                             <TableHead>
                                                 Tempo até o vencimento
                                             </TableHead>
                                         </TableHeader>
+                                        <TableBody>
+                                            {docs?.sort((a, b) => {
+                                                return a.apelido! >= b.apelido! ? 1 : -1;
+                                            }).map((doc: DocRhModels) => {
+                                                const fileName = `${doc.dir?.split("/")[4]}/${doc.dir?.split("/")[5]}`
+                                                return (
+                                                    <>
+                                                        <TableRow key={doc.id}
+                                                                  className="hover:bg-stone-400 cursor-pointer"
+                                                                  title="Baixar" onClick={() => {
+                                                            Router.push(`${host}/rh/find/download/arquivo?name=${fileName}`, "", {
+                                                                scroll: true
+                                                            })
+                                                        }}>
+                                                            <TableCell>{doc.apelido}</TableCell>
+                                                            <TableCell>{doc.tipo}</TableCell>
+                                                        </TableRow>
+                                                    </>
+                                                )
+                                            })}
+                                        </TableBody>
                                     </Table>
                                 </div>
                             </ScrollArea>
@@ -417,13 +488,29 @@ function ModalImportDocument() {
 
 function ModalImportDocExistentes() {
     const state = stateModalImportDocExistenteRhGlobal<stateModalDocExistenteProps>((state) => state)
+    const stateModalImport = stateModalImportDocRhGlobal((state) => state)
     const {host} = useContext(AuthContext);
+    const displayLounding = stateLoundingGlobal((state: any) => state);
 
-    const substituirDoc = () => {
+    const substituirDoc = async () => {
+        displayLounding.setDisplayLounding()
+        await new Promise((resolve) => setTimeout(resolve, 500));
         const docs: SubstituirDocRhDTO = {
             docExistente: state.docExistente,
             docSubstituto: state.docReferent
         }
+
+        await axios.post(`${host}/rh/update/substituir/doc`, docs).then(async (response) => {
+            displayLounding.setDisplaySuccess(response.data)
+            await new Promise((resolve) => setTimeout(resolve, 1500));
+            state.alterState()
+            stateModalImport.alterState()
+            displayLounding.setDisplayReset()
+        }).catch(async () => {
+            displayLounding.setDisplayFailure("Não foi possivel fazer a substituição no momento!")
+            await new Promise((resolve) => setTimeout(resolve, 1500));
+            displayLounding.setDisplayReset()
+        })
     }
 
     return (

@@ -1,23 +1,20 @@
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
     DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+    DialogTitle
 } from "@/components/ui/dialog"
 import {LabelInputPadrao} from "@/components/my/essential/label-input-padrao";
 import {useForm} from "react-hook-form";
 import {Button} from "@/components/ui/button";
 import ListAnexos from "@/components/my/essential/list-anexos";
-import {useCallback, useContext, useEffect, useState} from "react";
+import {useContext, useState} from "react";
 import {cn} from "@/lib/utils";
 import {Label} from "@/components/ui/label";
 import {SolicitcaoTiModels} from "@/lib/models";
 import {AuthContext} from "@/contexts/AuthContext";
 import axios from "axios";
 import {stateLoundingGlobal} from "@/lib/globalStates";
-import {forEachEntryModule} from "next/dist/build/webpack/utils";
 
 
 export default function DrawerAbrirSolicitacao({setState, state}: {
@@ -35,7 +32,7 @@ export default function DrawerAbrirSolicitacao({setState, state}: {
         for (let i = 0; i < anexoListItens.length; i++) {
             const formData = new FormData();
             formData.append("file", anexoListItens[i]);
-            formData.append("dir", "C:/Users/paralamas/Desktop/qualityweb2/public/assets/arquivosTicket");
+            formData.append("dir", "C:/Users/paralamas/Desktop/Projeto QualityWeb 2.0/Frontend Next/public/assets/arquivosTicket");
 
             try {
                 const response = await axios.post(`${host}/suporte/create/update/files`, formData);

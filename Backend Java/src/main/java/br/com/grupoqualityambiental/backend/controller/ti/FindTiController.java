@@ -81,7 +81,7 @@ public class FindTiController {
 
     @GetMapping("download/arquivo")
     public ResponseEntity<InputStreamResource> downloadFile(@RequestParam("name") String name) throws IOException {
-        String directory = "C:/Users/paralamas/Desktop/qualityweb2/public/assets/arquivosTicket/";
+        String directory = "C:/Users/paralamas/Desktop/Projeto QualityWeb 2.0/Frontend Next/public/assets/arquivosTicket/";
         File file = new File(directory + name);
 
         if (!file.exists()) {

@@ -26,7 +26,8 @@ function ContainerContextRoot({children, column}: ContainerContextRootProps) {
 
     return (
         <>
-            <div className={cn("flex flex-col h-full w-full", state.stateNavBar && "w-[80%]")}>
+            <div onClick={() => state.setFalse()}
+                 className={cn("flex flex-col h-full w-full", state.stateNavBar && "w-[80%]")}>
                 <ContainerContextHeader/>
                 <main className="w-full h-full flex items-center justify-center">
                     <div className={cn("w-[95%] h-[95%] bg-stone-100 rounded-md flex", column && "flex-col")}>

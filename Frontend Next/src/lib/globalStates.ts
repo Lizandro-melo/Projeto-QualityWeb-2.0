@@ -48,6 +48,9 @@ export const stateNavBarGlobal = create((set) => ({
     stateNavBar: true,
     alterState: () => set((state: any) => ({
         stateNavBar: !state.stateNavBar,
+    })),
+    setFalse: () => set((state: any) => ({
+        stateNavBar: false,
     }))
 }))
 
@@ -165,7 +168,7 @@ export type stateModalDocExistenteProps = {
     setDados: (tipo: string, docExistente: DocRhModels, docReferent: DocRhModels) => void
 }
 export const stateModalImportDocExistenteRhGlobal = create<stateModalDocExistenteProps>((set) => ({
-    stateModal: true,
+    stateModal: false,
     docExistente: null,
     docReferent: null,
     tipo: "",
