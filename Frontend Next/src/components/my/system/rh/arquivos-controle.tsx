@@ -24,7 +24,7 @@ import Router from "next/router";
 import {ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger} from "@/components/ui/context-menu";
 
 
-export default function ArquivosControleRh() {
+export default function ArquivosControle() {
     return (
         <>
             <ListColaboradoresAtivos/>

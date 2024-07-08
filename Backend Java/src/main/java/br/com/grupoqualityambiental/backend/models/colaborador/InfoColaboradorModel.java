@@ -15,7 +15,6 @@ import java.time.LocalDate;
 @EqualsAndHashCode(of = "fkAuth")
 public class InfoColaboradorModel {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "fk_auth")
     private Long fkAuth;
     @Column(name = "nome_completo")
@@ -38,4 +37,10 @@ public class InfoColaboradorModel {
     private String dirFoto;
     @Enumerated(EnumType.STRING)
     private TipoColaboradorEnum tipo;
+
+    public InfoColaboradorModel(Long id, String nomeCompleto, TipoColaboradorEnum tipo) {
+        this.fkAuth = id;
+        this.nomeCompleto = nomeCompleto;
+        this.tipo = tipo;
+    }
 }
