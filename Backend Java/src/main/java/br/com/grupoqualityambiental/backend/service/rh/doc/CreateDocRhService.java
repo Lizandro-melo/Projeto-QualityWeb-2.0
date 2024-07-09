@@ -1,6 +1,5 @@
 package br.com.grupoqualityambiental.backend.service.rh.doc;
 
-import br.com.grupoqualityambiental.backend.exception.IntegridadeDadosTiException;
 import br.com.grupoqualityambiental.backend.exception.rh.DocExistenteException;
 import br.com.grupoqualityambiental.backend.models.rh.DocRhModels;
 import br.com.grupoqualityambiental.backend.repository.rh.DocRhRepository;
@@ -9,7 +8,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CreateRhService {
+public class CreateDocRhService {
 
     @Autowired
     private DocRhRepository docRhRepository;

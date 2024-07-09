@@ -2,7 +2,7 @@ package br.com.grupoqualityambiental.backend.controller.rh.doc;
 
 import br.com.grupoqualityambiental.backend.dto.rh.DocExpirandoAlertRhDTO;
 import br.com.grupoqualityambiental.backend.models.rh.DocRhModels;
-import br.com.grupoqualityambiental.backend.service.rh.doc.FindRhService;
+import br.com.grupoqualityambiental.backend.service.rh.doc.FindDocRhService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -24,7 +23,7 @@ import java.util.List;
 public class FindRhController {
 
     @Autowired
-    private FindRhService findRhService;
+    private FindDocRhService findRhService;
 
 
     @GetMapping(

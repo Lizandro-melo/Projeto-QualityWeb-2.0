@@ -11,7 +11,7 @@ export type InfoColaborador = {
     nTitulo: string
     nomeMaterno: string
     cep: string
-    DataNascimento: string
+    dataNascimento: string
     dirFoto: string
     tipo: string
 }

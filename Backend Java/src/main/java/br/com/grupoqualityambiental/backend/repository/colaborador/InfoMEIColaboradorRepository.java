@@ -5,5 +5,5 @@ import br.com.grupoqualityambiental.backend.models.colaborador.InfoColaboradorMo
 import br.com.grupoqualityambiental.backend.models.colaborador.InfoMEIColaboradorModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface InfoMEIColaboradorRepository extends JpaRepository<InfoMEIColaboradorModel, InfoColaboradorModel> {
+public interface InfoMEIColaboradorRepository extends JpaRepository<InfoMEIColaboradorModel, Integer> {
 }

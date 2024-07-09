@@ -10,7 +10,7 @@ import java.io.File;
 import java.io.IOException;
 
 @Service
-public class UpdateRhService {
+public class UpdateDocRhService {
     @Autowired
     private DocRhRepository docRhRepository;
 

@@ -3,7 +3,7 @@ package br.com.grupoqualityambiental.backend.service.ti;
 import br.com.grupoqualityambiental.backend.dto.ti.RequestClassificarDTO;
 import br.com.grupoqualityambiental.backend.dto.ti.RequestMensagemTiDTO;
 import br.com.grupoqualityambiental.backend.enumerated.colaborador.SolicitacaoTiEnum;
-import br.com.grupoqualityambiental.backend.exception.IntegridadeDadosTiException;
+import br.com.grupoqualityambiental.backend.exception.IntegridadeDadosException;
 import br.com.grupoqualityambiental.backend.models.ti.ClassificacaoTiModels;
 import br.com.grupoqualityambiental.backend.models.ti.MensagemTiModels;
 import br.com.grupoqualityambiental.backend.models.ti.SolicitacaoTiModels;
@@ -33,13 +33,13 @@ public class CreateTiService {
     @Autowired
     private SubcaregoriaTiRepository subcaregoriaTiRepository;
 
-    public String verificarIntegridadeAndCreateSolicitacao(SolicitacaoTiModels solicitacao) throws IntegridadeDadosTiException {
+    public String verificarIntegridadeAndCreateSolicitacao(SolicitacaoTiModels solicitacao) throws IntegridadeDadosException {
         if (solicitacao.getTitulo().isEmpty() || solicitacao.getTitulo() == null) {
-            throw new IntegridadeDadosTiException("Título em branco!");
+            throw new IntegridadeDadosException("Título em branco!");
         } else if (solicitacao.getOcorrencia().isEmpty() || solicitacao.getOcorrencia() == null) {
-            throw new IntegridadeDadosTiException("Ocorrência em branco");
+            throw new IntegridadeDadosException("Ocorrência em branco");
         } else if (solicitacao.getSolicitante() == null) {
-            throw new IntegridadeDadosTiException("Ocorreu algum erro no processo de solicitação, contate ao setor de TI");
+            throw new IntegridadeDadosException("Ocorreu algum erro no processo de solicitação, contate ao setor de TI");
         } else {
             solicitacao.setStatus(SolicitacaoTiEnum.PENDENTE);
             solicitacao.setDataHora(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
@@ -48,11 +48,11 @@ public class CreateTiService {
         }
     }
 
-    public String verficarIntegridadeAndSendMensagem(RequestMensagemTiDTO mensagem) throws IntegridadeDadosTiException {
+    public String verficarIntegridadeAndSendMensagem(RequestMensagemTiDTO mensagem) throws IntegridadeDadosException {
         if (mensagem.mensagem().isEmpty() || mensagem.mensagem() == null) {
-            throw new IntegridadeDadosTiException("Mensagem em branco!");
+            throw new IntegridadeDadosException("Mensagem em branco!");
         } else if (mensagem.responsavel() == null || mensagem.referentSolicitacao() == null || !solicitacaoTiRepository.existsById(mensagem.referentSolicitacao().longValue())) {
-            throw new IntegridadeDadosTiException("Ocorreu algum erro no processo de solicitação, contate ao setor de TI");
+            throw new IntegridadeDadosException("Ocorreu algum erro no processo de solicitação, contate ao setor de TI");
         } else {
             MensagemTiModels mensagemTiModels = new MensagemTiModels(mensagem);
             SolicitacaoTiModels solicitacao = solicitacaoTiRepository.findById(mensagem.referentSolicitacao().longValue()).get();

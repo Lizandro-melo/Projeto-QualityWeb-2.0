@@ -54,6 +54,8 @@ export default function ListSolicitacoes() {
         })
     }
 
+
+
     return (
         <>
             {solicitacoes?.sort((a: any, b: any) => a.id - b.id

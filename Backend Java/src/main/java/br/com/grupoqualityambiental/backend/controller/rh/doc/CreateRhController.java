@@ -1,9 +1,8 @@
 package br.com.grupoqualityambiental.backend.controller.rh.doc;
 
-import br.com.grupoqualityambiental.backend.exception.IntegridadeDadosTiException;
 import br.com.grupoqualityambiental.backend.exception.rh.DocExistenteException;
 import br.com.grupoqualityambiental.backend.models.rh.DocRhModels;
-import br.com.grupoqualityambiental.backend.service.rh.doc.CreateRhService;
+import br.com.grupoqualityambiental.backend.service.rh.doc.CreateDocRhService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public class CreateRhController {
 
     @Autowired
-    private CreateRhService createRhService;
+    private CreateDocRhService createRhService;
 
 
     @PostMapping(

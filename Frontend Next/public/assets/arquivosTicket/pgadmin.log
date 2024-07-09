@@ -1,0 +1,356 @@
+2024-03-15 16:40:33 ERROR  : ERROR:  update or delete on table "estagiario" violates foreign key constraint "fk_estagiario" on table "colaborador"
+DETAIL:  Key (id_estagiario)=(41) is still referenced from table "colaborador".
+2024-03-20 13:43:42 ERROR  : ERROR:  syntax error at or near "primeiro_login"
+LINE 2: set primeiro_login = true
+            ^
+2024-03-20 13:45:47 ERROR  : ERROR:  syntax error at or near "table"
+LINE 1: update table funcionario 
+               ^
+2024-03-20 13:45:57 ERROR  : ERROR:  syntax error at or near "column"
+LINE 1: update column funcionario 
+               ^
+2024-03-20 13:45:58 ERROR  : ERROR:  syntax error at or near "column"
+LINE 1: update column funcionario 
+               ^
+2024-03-21 12:39:36 ERROR  : ERROR:  invalid input syntax for integer: "USUARIO"
+LINE 1: ...roledeestoque.funcionario(id_funcionario) VALUES ('USUARIO':...
+                                                             ^
+2024-03-26 14:38:32 ERROR  : ERROR:  syntax error at or near "create"
+LINE 7: create table categoria(
+        ^
+2024-03-26 14:38:43 ERROR  : ERROR:  syntax error at or near "PRIMARY"
+LINE 13:  fk_categoria PRIMARY KEY BIGINT NOT NULL,
+                       ^
+2024-03-26 15:57:32 ERROR  : ERROR:  relation "classificacao" already exists
+2024-03-26 16:44:33 ERROR  : ERROR:  null value in column "nome" violates not-null constraint
+DETAIL:  Failing row contains (3, 1, null).
+2024-03-26 16:45:22 ERROR  : ERROR:  null value in column "nome" violates not-null constraint
+DETAIL:  Failing row contains (6, 1, null).
+2024-03-26 16:45:37 ERROR  : ERROR:  null value in column "nome" violates not-null constraint
+DETAIL:  Failing row contains (7, 2, null).
+2024-03-26 16:53:11 ERROR  : ERROR:  null value in column "nome" violates not-null constraint
+DETAIL:  Failing row contains (21, 3, null).
+2024-03-26 16:53:13 ERROR  : ERROR:  null value in column "nome" violates not-null constraint
+DETAIL:  Failing row contains (22, 3, null).
+2024-03-27 08:32:55 ERROR  : ERROR:  syntax error at or near "WHERE"
+LINE 3: WHERE TO_DATE(data_hora, 'DD/MM/YYYY') BETWEEN '2023-11-29' ...
+        ^
+2024-03-27 08:33:12 ERROR  : ERROR:  syntax error at or near "WHERE"
+LINE 3: WHERE TO_DATE(data_hora, 'DD/MM/YYYY') BETWEEN '2023-11-29' ...
+        ^
+2024-03-27 08:33:13 ERROR  : ERROR:  syntax error at or near "WHERE"
+LINE 3: WHERE TO_DATE(data_hora, 'DD/MM/YYYY') BETWEEN '2023-11-29' ...
+        ^
+2024-03-27 08:33:33 ERROR  : ERROR:  syntax error at or near "WHERE"
+LINE 3: WHERE TO_DATE(data_hora, 'DD/MM/YYYY') BETWEEN '2023-11-29' ...
+        ^
+2024-03-27 08:33:33 ERROR  : ERROR:  syntax error at or near "WHERE"
+LINE 3: WHERE TO_DATE(data_hora, 'DD/MM/YYYY') BETWEEN '2023-11-29' ...
+        ^
+2024-03-27 08:34:13 ERROR  : ERROR:  relation "sistemadeos.chamada" does not exist
+LINE 2: inner join sistemadeos.chamada ch
+                   ^
+2024-03-27 08:34:36 ERROR  : ERROR:  relation "sistemadeos.chamada" does not exist
+LINE 2: inner join sistemadeos.chamada ch
+                   ^
+2024-03-27 08:38:02 ERROR  : ERROR:  syntax error at end of input
+LINE 3: ...AND TO_DATE(ch.data_hora, 'DD/MM/YYYY') BETWEEN '2023-11-29'
+                                                                       ^
+2024-03-27 08:39:44 ERROR  : ERROR:  column "data" contains null values
+2024-03-27 08:57:27 ERROR  : ERROR:  cannot drop table sistemadeos.categoria because other objects depend on it
+DETAIL:  constraint fk_categoria on table sistemadeos.subcategoria depends on table sistemadeos.categoria
+HINT:  Use DROP ... CASCADE to drop the dependent objects too.
+2024-03-27 09:13:18 ERROR  : ERROR:  syntax error at or near "CREATE"
+LINE 21: CREATE TABLE sistemadeos.classificacao(
+         ^
+2024-03-27 09:13:30 ERROR  : ERROR:  syntax error at or near ")"
+LINE 28: );
+         ^
+2024-03-27 15:53:01 ERROR  : ERROR:  insert or update on table "classificacao" violates foreign key constraint "fk_categoria"
+DETAIL:  Key (fk_categoria)=(1) is not present in table "categoria".
+2024-03-27 15:53:11 ERROR  : ERROR:  insert or update on table "classificacao" violates foreign key constraint "fk_categoria"
+DETAIL:  Key (fk_categoria)=(1) is not present in table "categoria".
+2024-03-27 15:54:46 ERROR  : ERROR:  insert or update on table "classificacao" violates foreign key constraint "fk_grupo"
+DETAIL:  Key (fk_grupo)=(4) is not present in table "grupo".
+2024-03-27 15:55:44 ERROR  : ERROR:  insert or update on table "classificacao" violates foreign key constraint "fk_subcategoria"
+DETAIL:  Key (fk_subcategoria)=(9) is not present in table "subcategoria".
+2024-03-27 15:56:14 ERROR  : ERROR:  insert or update on table "classificacao" violates foreign key constraint "fk_subcategoria"
+DETAIL:  Key (fk_subcategoria)=(9) is not present in table "subcategoria".
+2024-04-08 16:39:35 ERROR  : ERROR:  type "datetime" does not exist
+LINE 4:  datahora datetime not null,
+                  ^
+2024-04-08 16:40:14 ERROR  : ERROR:  type "datetime" does not exist
+LINE 4:  datahora DateTime not null,
+                  ^
+2024-04-09 07:43:57 ERROR  : ERROR:  null value in column "visualizado" violates not-null constraint
+DETAIL:  Failing row contains (1, Teste de Reenvio, 2024-04-09 14:00:00, Responsavel, null, null).
+2024-04-09 07:44:05 ERROR  : ERROR:  duplicate key value violates unique constraint "chat_pkey"
+DETAIL:  Key (id)=(1) already exists.
+2024-04-12 14:47:32 ERROR  : ERROR:  syntax error at or near ")"
+LINE 6: )
+        ^
+2024-04-12 14:47:36 ERROR  : ERROR:  syntax error at or near ")"
+LINE 6: );
+        ^
+2024-04-12 14:47:45 ERROR  : ERROR:  syntax error at or near ")"
+LINE 6: );
+        ^
+2024-04-12 15:07:21 ERROR  : ERROR:  relation "colaborador_mes" already exists
+2024-04-12 15:25:02 ERROR  : ERROR:  syntax error at or near ")"
+LINE 5: );
+        ^
+2024-04-15 10:55:18 ERROR  : ERROR:  syntax error at or near ""%PAPEL A4%""
+LINE 2: WHERE LIKE "%PAPEL A4%";
+                   ^
+2024-04-15 10:55:27 ERROR  : ERROR:  type "like" does not exist
+LINE 2: WHERE LIKE '%PAPEL A4%'
+              ^
+2024-04-15 10:56:04 ERROR  : ERROR:  column "count" does not exist
+LINE 1: SELECT count FROM controledeestoque.pedido_item 
+               ^
+2024-04-16 07:59:15 ERROR  : ERROR:  insert or update on table "voto" violates foreign key constraint "candidato"
+DETAIL:  Key (candidato)=(28) is not present in table "colaborador_mes".
+2024-04-16 07:59:22 ERROR  : ERROR:  insert or update on table "voto" violates foreign key constraint "candidato"
+DETAIL:  Key (candidato)=(28) is not present in table "colaborador_mes".
+2024-04-16 07:59:37 ERROR  : ERROR:  insert or update on table "voto" violates foreign key constraint "candidato"
+DETAIL:  Key (candidato)=(28) is not present in table "colaborador_mes".
+2024-04-16 08:32:23 ERROR  : ERROR:  syntax error at or near "as"
+LINE 1: SELECT candidato count as quantidade_votos from voto;
+                               ^
+2024-04-16 08:33:18 ERROR  : ERROR:  column "count" does not exist
+LINE 1: SELECT candidato, count as quantidade_votos from voto;
+                          ^
+2024-04-16 08:33:19 ERROR  : ERROR:  column "count" does not exist
+LINE 1: SELECT candidato, count as quantidade_votos from voto;
+                          ^
+2024-04-16 08:33:19 ERROR  : ERROR:  column "count" does not exist
+LINE 1: SELECT candidato, count as quantidade_votos from voto;
+                          ^
+2024-04-16 08:33:20 ERROR  : ERROR:  column "count" does not exist
+LINE 1: SELECT candidato, count as quantidade_votos from voto;
+                          ^
+2024-04-16 08:33:25 ERROR  : ERROR:  count(*) must be used to call a parameterless aggregate function
+LINE 1: SELECT candidato, count() as quantidade_votos from voto;
+                          ^
+2024-04-16 08:33:48 ERROR  : ERROR:  column "count" does not exist
+LINE 1: SELECT candidato, count from voto;
+                          ^
+2024-04-16 08:34:01 ERROR  : ERROR:  column "voto.candidato" must appear in the GROUP BY clause or be used in an aggregate function
+LINE 1: SELECT candidato, count(candidato) from voto;
+               ^
+2024-04-16 08:34:03 ERROR  : ERROR:  column "voto.candidato" must appear in the GROUP BY clause or be used in an aggregate function
+LINE 1: SELECT candidato, count(candidato) from voto;
+               ^
+2024-04-16 08:34:30 ERROR  : ERROR:  column "voto.candidato" must appear in the GROUP BY clause or be used in an aggregate function
+LINE 1: SELECT candidato, count(motivo) from voto;
+               ^
+2024-04-16 08:34:31 ERROR  : ERROR:  column "voto.candidato" must appear in the GROUP BY clause or be used in an aggregate function
+LINE 1: SELECT candidato, count(motivo) from voto;
+               ^
+2024-04-16 08:35:09 ERROR  : ERROR:  column "voto.candidato" must appear in the GROUP BY clause or be used in an aggregate function
+LINE 1: SELECT candidato, count(motivo) from voto;
+               ^
+2024-04-16 08:35:13 ERROR  : ERROR:  syntax error at or near "("
+LINE 1: SELECT candidato count(motivo) from voto;
+                              ^
+2024-04-16 08:35:20 ERROR  : ERROR:  syntax error at or near "("
+LINE 1: SELECT candidato count(motivo) as teste from voto;
+                              ^
+2024-04-16 08:35:22 ERROR  : ERROR:  column "voto.candidato" must appear in the GROUP BY clause or be used in an aggregate function
+LINE 1: SELECT candidato, count(motivo) as teste from voto;
+               ^
+2024-04-16 08:35:23 ERROR  : ERROR:  column "voto.candidato" must appear in the GROUP BY clause or be used in an aggregate function
+LINE 1: SELECT candidato, count(motivo) as teste from voto;
+               ^
+2024-04-16 08:35:23 ERROR  : ERROR:  column "voto.candidato" must appear in the GROUP BY clause or be used in an aggregate function
+LINE 1: SELECT candidato, count(motivo) as teste from voto;
+               ^
+2024-04-16 08:35:23 ERROR  : ERROR:  column "voto.candidato" must appear in the GROUP BY clause or be used in an aggregate function
+LINE 1: SELECT candidato, count(motivo) as teste from voto;
+               ^
+2024-04-16 08:35:24 ERROR  : ERROR:  column "voto.candidato" must appear in the GROUP BY clause or be used in an aggregate function
+LINE 1: SELECT candidato, count(motivo) as teste from voto;
+               ^
+2024-04-16 08:35:43 ERROR  : ERROR:  count(*) must be used to call a parameterless aggregate function
+LINE 1: SELECT candidato, count() as teste from voto;
+                          ^
+2024-04-16 08:35:46 ERROR  : ERROR:  column "count" does not exist
+LINE 1: SELECT candidato, count as teste from voto;
+                          ^
+2024-04-16 08:35:51 ERROR  : ERROR:  column "count" does not exist
+LINE 1: SELECT candidato, count as motivo from voto;
+                          ^
+2024-04-16 08:36:10 ERROR  : ERROR:  column "count" does not exist
+LINE 1: SELECT count from voto;
+               ^
+2024-04-16 08:36:10 ERROR  : ERROR:  column "count" does not exist
+LINE 1: SELECT count from voto;
+               ^
+2024-04-16 08:36:11 ERROR  : ERROR:  column "count" does not exist
+LINE 1: SELECT count from voto;
+               ^
+2024-04-16 08:42:04 ERROR  : ERROR:  syntax error at or near "*"
+LINE 1: SELECT count as * from voto;
+                        ^
+2024-04-16 08:42:33 ERROR  : ERROR:  column "count" does not exist
+LINE 1: SELECT count from voto
+               ^
+2024-04-16 08:42:56 ERROR  : ERROR:  syntax error at or near "count"
+LINE 1: SELECT * count from voto
+                 ^
+2024-04-16 08:43:01 ERROR  : ERROR:  syntax error at or near "count"
+LINE 1: SELECT * count() from voto
+                 ^
+2024-04-16 08:43:03 ERROR  : ERROR:  count(*) must be used to call a parameterless aggregate function
+LINE 1: SELECT count() from voto
+               ^
+2024-04-16 08:43:06 ERROR  : ERROR:  column "count" does not exist
+LINE 1: SELECT count from voto
+               ^
+2024-04-16 08:43:12 ERROR  : ERROR:  column "count" does not exist
+LINE 1: SELECT count as teste from voto
+               ^
+2024-04-16 08:43:13 ERROR  : ERROR:  column "count" does not exist
+LINE 1: SELECT count as teste from voto
+               ^
+2024-04-16 08:43:13 ERROR  : ERROR:  column "count" does not exist
+LINE 1: SELECT count as teste from voto
+               ^
+2024-04-16 08:43:13 ERROR  : ERROR:  column "count" does not exist
+LINE 1: SELECT count as teste from voto
+               ^
+2024-04-16 08:43:31 ERROR  : ERROR:  column "count" does not exist
+LINE 1: SELECT count as teste from voto
+               ^
+2024-04-16 08:45:41 ERROR  : ERROR:  column "v.candidato" must appear in the GROUP BY clause or be used in an aggregate function
+LINE 1: SELECT candidato, COUNT(v.*) from voto v 
+               ^
+2024-04-16 08:45:52 ERROR  : ERROR:  syntax error at or near "("
+LINE 1: SELECT candidato COUNT(v.*) from voto v 
+                              ^
+2024-04-16 08:46:01 ERROR  : ERROR:  syntax error at or near "("
+LINE 1: SELECT v.candidato COUNT(v.*) from voto v 
+                                ^
+2024-04-16 08:46:37 ERROR  : ERROR:  syntax error at or near "colaborador_mes"
+LINE 1: SELECT COUNT(*) from voto v colaborador_mes c
+                                    ^
+2024-04-18 09:29:29 ERROR  : ERROR:  syntax error at or near "NOT"
+LINE 2: CREATE database IF NOT EXISTS estoque;
+                           ^
+2024-04-18 09:32:18 ERROR  : ERROR:  syntax error at or near "REATE"
+LINE 1: REATE TABLE IF NOT EXISTS tipo (
+        ^
+2024-04-18 09:32:22 ERROR  : ERROR:  relation "usuario" does not exist
+2024-04-18 09:34:27 ERROR  : ERROR:  schema "cliente" does not exist
+2024-04-18 09:35:12 ERROR  : ERROR:  schema "cliente" does not exist
+2024-04-18 09:35:23 ERROR  : ERROR:  syntax error at or near ")"
+LINE 11: );
+         ^
+2024-04-18 09:46:50 ERROR  : ERROR:  syntax error at or near ";"
+LINE 1: create table estoque;
+                            ^
+2024-04-18 09:46:56 ERROR  : ERROR:  syntax error at or near ";"
+LINE 1: create table estoque;
+                            ^
+2024-04-18 09:47:05 ERROR  : ERROR:  CREATE DATABASE cannot be executed from a function or multi-command string
+2024-04-18 16:25:12 ERROR  : ERROR:  cannot drop table tipo_negocio because other objects depend on it
+DETAIL:  constraint fkacilb52ev4b38gvw1h2mjwb1r on table usuario depends on table tipo_negocio
+HINT:  Use DROP ... CASCADE to drop the dependent objects too.
+2024-04-18 16:43:50 ERROR  : ERROR:  null value in column "datahora" violates not-null constraint
+DETAIL:  Failing row contains (1, null, null, null, [{"solitante":347,"quantidade":4,"item":2}], null, null).
+2024-04-19 12:57:33 ERROR  : ERROR:  null value in column "lista_pedidos2" violates not-null constraint
+DETAIL:  Failing row contains (3, null, null, 2024-04-19 00:00:00, null, solicitado, 548, {"solitante": 548, "quantidade": 4,"item":2}).
+2024-04-19 14:53:12 ERROR  : ERROR:  syntax error at or near ":"
+LINE 4:  quantidade: int not null,
+                   ^
+2024-04-29 08:33:47 ERROR  : ERROR:  syntax error at or near "GENERATED"
+LINE 31:   quantidade INT GENERATED ALWAYS AS () STORED,
+                          ^
+2024-04-29 16:06:50 ERROR  : ERROR:  update or delete on table "item" violates foreign key constraint "movimentacao_item_fkey" on table "movimentacao"
+DETAIL:  Key (id)=(2) is still referenced from table "movimentacao".
+2024-04-29 16:06:52 ERROR  : ERROR:  update or delete on table "item" violates foreign key constraint "movimentacao_item_fkey" on table "movimentacao"
+DETAIL:  Key (id)=(1) is still referenced from table "movimentacao".
+2024-04-29 16:06:59 ERROR  : ERROR:  update or delete on table "solicitacao" violates foreign key constraint "solicitacao" on table "item_solicitado"
+DETAIL:  Key (id)=(12) is still referenced from table "item_solicitado".
+2024-04-29 16:15:33 ERROR  : ERROR:  invalid input syntax for integer: "id;nome;status;;"
+CONTEXT:  COPY categoria, line 1, column id: "id;nome;status;;"
+2024-04-29 16:15:39 ERROR  : Copy failed!
+
+2024-04-29 16:16:20 ERROR  : ERROR:  invalid input syntax for integer: "2;EPI/COLETA;true"
+CONTEXT:  COPY categoria, line 1, column id: "2;EPI/COLETA;true"
+2024-04-29 16:16:43 ERROR  : Copy failed!
+
+2024-04-29 16:24:39 ERROR  : ERROR:  invalid input syntax for integer: "2	ALGODAO - 500 G	true	0	1	2"
+CONTEXT:  COPY item, line 1, column id: "2	ALGODAO - 500 G	true	0	1	2"
+2024-04-29 16:24:52 ERROR  : Copy failed!
+
+2024-04-29 16:25:29 ERROR  : ERROR:  invalid input syntax for integer: "2	ALGODAO - 500 G	true	0	1	2"
+CONTEXT:  COPY item, line 1, column id: "2	ALGODAO - 500 G	true	0	1	2"
+2024-04-29 16:25:32 ERROR  : Copy failed!
+
+2024-04-29 16:27:09 ERROR  : ERROR:  invalid input syntax for integer: "2	ALGODAO - 500 G	true	0	1	2"
+CONTEXT:  COPY item, line 1, column id: "2	ALGODAO - 500 G	true	0	1	2"
+2024-04-29 16:27:28 ERROR  : Copy failed!
+
+2024-04-30 08:21:03 ERROR  : ERROR:  update or delete on table "solicitacao" violates foreign key constraint "solicitacao" on table "item_solicitado"
+DETAIL:  Key (id)=(30) is still referenced from table "item_solicitado".
+2024-04-30 10:31:31 ERROR  : ERROR:  syntax error at or near "FROM"
+LINE 1: update delete FROM item where nome='TESTE'
+                      ^
+2024-05-03 15:20:14 ERROR  : ERROR:  update or delete on table "solicitacao" violates foreign key constraint "solicitacao" on table "item_solicitado"
+DETAIL:  Key (id)=(41) is still referenced from table "item_solicitado".
+2024-05-08 11:20:11 ERROR  : ERROR:  syntax error at or near ":"
+LINE 15: ...re colaborador = 336 and status = true and tipo = :tipo and ...
+                                                              ^
+2024-05-08 11:20:55 ERROR  : ERROR:  relation "anotacaosistemarhentity" does not exist
+LINE 14: from AnotacaoSistemaRhEntity 
+              ^
+2024-05-08 11:21:03 ERROR  : ERROR:  column "bancopositivo" does not exist
+LINE 1: SELECT SUM(bancoPositivo) AS bancoPositivo 
+                   ^
+HINT:  Perhaps you meant to reference the column "anotacao.banco_positivo".
+2024-05-08 12:45:47 ERROR  : ERROR:  column "colaborador" does not exist
+LINE 15: where colaborador = 336 and status = true and tipo = 'CONTRA...
+               ^
+HINT:  Perhaps you meant to reference the column "anotacao.fk_colaborador".
+2024-05-08 12:46:08 ERROR  : ERROR:  column "id_colaborador" does not exist
+LINE 15: where id_colaborador = 336 and status = true and tipo = 'CON...
+               ^
+HINT:  Perhaps you meant to reference the column "anotacao.fk_colaborador".
+2024-05-16 14:10:26 ERROR  : Error connecting to the server: FATAL:  password authentication failed for user "postgres"
+
+2024-05-21 12:54:14 ERROR  : ERROR:  column "contato_emergencia_nome" of relation "colaborador" already exists
+2024-05-27 16:41:12 ERROR  : ERROR:  update or delete on table "colaborador" violates foreign key constraint "anotacao_fk_colaborador_fkey" on table "anotacao"
+DETAIL:  Key (id_colaborador)=(310) is still referenced from table "anotacao".
+2024-05-27 16:42:00 ERROR  : ERROR:  update or delete on table "colaborador" violates foreign key constraint "anotacao_fk_colaborador_fkey" on table "anotacao"
+DETAIL:  Key (id_colaborador)=(310) is still referenced from table "anotacao".
+2024-05-27 16:43:51 ERROR  : ERROR:  syntax error at or near "fk_colaborador"
+LINE 1: delete from anotacao while fk_colaborador = 310
+                                   ^
+2024-05-27 16:45:25 ERROR  : ERROR:  syntax error at or near "fk_colaborador"
+LINE 1: delete from anotacao whire fk_colaborador = 310
+                                   ^
+2024-06-26 16:20:38 ERROR  : ERROR:  update or delete on table "item" violates foreign key constraint "movimentacao_item_fkey" on table "movimentacao"
+DETAIL:  Key (id)=(902) is still referenced from table "movimentacao".
+2024-06-26 16:20:40 ERROR  : ERROR:  update or delete on table "item" violates foreign key constraint "movimentacao_item_fkey" on table "movimentacao"
+DETAIL:  Key (id)=(753) is still referenced from table "movimentacao".
+2024-06-26 16:20:41 ERROR  : ERROR:  update or delete on table "item" violates foreign key constraint "movimentacao_item_fkey" on table "movimentacao"
+DETAIL:  Key (id)=(752) is still referenced from table "movimentacao".
+2024-06-26 16:20:42 ERROR  : ERROR:  update or delete on table "item" violates foreign key constraint "movimentacao_item_fkey" on table "movimentacao"
+DETAIL:  Key (id)=(702) is still referenced from table "movimentacao".
+2024-06-26 16:20:46 ERROR  : ERROR:  update or delete on table "item" violates foreign key constraint "movimentacao_item_fkey" on table "movimentacao"
+DETAIL:  Key (id)=(902) is still referenced from table "movimentacao".
+2024-07-08 08:16:23 ERROR  : ERROR:  duplicate key value violates unique constraint "setor_pkey"
+DETAIL:  Key (id_setor)=(17) already exists.
+2024-07-08 08:16:36 ERROR  : ERROR:  update or delete on table "setor" violates foreign key constraint "colaborador_setor_fk_fkey" on table "colaborador"
+DETAIL:  Key (id_setor)=(9) is still referenced from table "colaborador".
+2024-07-08 08:16:40 ERROR  : ERROR:  update or delete on table "setor" violates foreign key constraint "colaborador_setor_fk_fkey" on table "colaborador"
+DETAIL:  Key (id_setor)=(7) is still referenced from table "colaborador".
+2024-07-08 08:18:52 ERROR  : ERROR:  syntax error at or near "while"
+LINE 1: update colaborador SET setor_fk = 7 while setor_fk = 9
+                                            ^
+2024-07-08 08:19:34 ERROR  : ERROR:  syntax error at or near "setor_fk"
+LINE 1: update colaborador  while setor_fk = 9 SET setor_fk = 7
+                                  ^
+2024-07-08 08:20:56 ERROR  : ERROR:  update or delete on table "setor" violates foreign key constraint "colaborador_setor_fk_fkey" on table "colaborador"
+DETAIL:  Key (id_setor)=(7) is still referenced from table "colaborador".

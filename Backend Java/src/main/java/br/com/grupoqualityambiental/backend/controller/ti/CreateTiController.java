@@ -3,7 +3,7 @@ package br.com.grupoqualityambiental.backend.controller.ti;
 import br.com.grupoqualityambiental.backend.dto.ti.RequestClassificarDTO;
 import br.com.grupoqualityambiental.backend.dto.ti.RequestMensagemTiDTO;
 import br.com.grupoqualityambiental.backend.enumerated.colaborador.SolicitacaoTiEnum;
-import br.com.grupoqualityambiental.backend.exception.IntegridadeDadosTiException;
+import br.com.grupoqualityambiental.backend.exception.IntegridadeDadosException;
 import br.com.grupoqualityambiental.backend.models.ti.SolicitacaoTiModels;
 import br.com.grupoqualityambiental.backend.repository.ti.SolicitacaoTiRepository;
 import br.com.grupoqualityambiental.backend.service.ti.CreateTiService;
@@ -35,10 +35,10 @@ public class CreateTiController {
     @PostMapping(
             path = "solicitacao"
     )
-    public ResponseEntity<String> createSolicitacao(@RequestBody SolicitacaoTiModels requestSolicitacao) throws IntegridadeDadosTiException {
+    public ResponseEntity<String> createSolicitacao(@RequestBody SolicitacaoTiModels requestSolicitacao) throws IntegridadeDadosException {
         try {
             return ResponseEntity.ok(createTiService.verificarIntegridadeAndCreateSolicitacao(requestSolicitacao));
-        } catch (IntegridadeDadosTiException e) {
+        } catch (IntegridadeDadosException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -46,10 +46,10 @@ public class CreateTiController {
     @PostMapping(
             path = "mensagem"
     )
-    public ResponseEntity<String> createMensagem(@RequestBody RequestMensagemTiDTO request) throws IntegridadeDadosTiException {
+    public ResponseEntity<String> createMensagem(@RequestBody RequestMensagemTiDTO request) throws IntegridadeDadosException {
         try {
             return ResponseEntity.ok(createTiService.verficarIntegridadeAndSendMensagem(request));
-        } catch (IntegridadeDadosTiException e) {
+        } catch (IntegridadeDadosException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

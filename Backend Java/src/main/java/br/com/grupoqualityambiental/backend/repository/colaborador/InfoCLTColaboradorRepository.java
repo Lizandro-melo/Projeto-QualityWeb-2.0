@@ -4,5 +4,8 @@ import br.com.grupoqualityambiental.backend.models.colaborador.InfoCLTColaborado
 import br.com.grupoqualityambiental.backend.models.colaborador.InfoColaboradorModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface InfoCLTColaboradorRepository extends JpaRepository<InfoCLTColaboradorModel, InfoColaboradorModel> {
+import java.util.List;
+
+public interface InfoCLTColaboradorRepository extends JpaRepository<InfoCLTColaboradorModel, Integer> {
+
 }

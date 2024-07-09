@@ -1,5 +1,7 @@
 package br.com.grupoqualityambiental.backend.controller.colaborador;
 
+import br.com.grupoqualityambiental.backend.dto.colaborador.InfoColaboradorCompletoDTO;
+import br.com.grupoqualityambiental.backend.enumerated.colaborador.TipoColaboradorEnum;
 import br.com.grupoqualityambiental.backend.models.acesso.AcessoModel;
 import br.com.grupoqualityambiental.backend.models.colaborador.InfoColaboradorModel;
 import br.com.grupoqualityambiental.backend.service.colaborador.FindColaboradorService;
@@ -22,6 +24,14 @@ public class FindColaboradorController {
     )
     public List<InfoColaboradorModel> getAtivos() {
         return findColaboradorService.getAllColaboradoresAtivos();
+    }
+
+    @GetMapping(
+            path = "/colaboradores"
+    )
+    public List<InfoColaboradorModel> getAtivos(@RequestParam("nome") String nome, @RequestParam("tipo") String tipo) {
+        TipoColaboradorEnum tipoColaborador = TipoColaboradorEnum.valueOf(tipo.toUpperCase());
+        return findColaboradorService.findByFiltro(nome, tipoColaborador);
     }
 
     @GetMapping(

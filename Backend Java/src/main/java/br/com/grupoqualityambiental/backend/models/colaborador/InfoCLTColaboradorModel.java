@@ -1,6 +1,6 @@
 package br.com.grupoqualityambiental.backend.models.colaborador;
 
-import br.com.grupoqualityambiental.backend.serial.colaborador.InfoCLTColaboradorId;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,10 +12,10 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(of = "id")
 public class InfoCLTColaboradorModel {
-    @EmbeddedId
-    private InfoCLTColaboradorId id;
+    @Id
+    @Column(name = "fk_auth")
+    private Integer id;
     @Column(name = "data_admissao")
     private LocalDate dataAdmissao;
     @Column(name = "data_demissao")

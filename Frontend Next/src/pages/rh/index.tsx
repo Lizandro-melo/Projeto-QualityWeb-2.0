@@ -9,6 +9,7 @@ import {ContainerContext} from "@/components/my/essential/ContainerContext";
 import {pageSelectProps, pageSelectRhGlobal} from "@/lib/globalStates";
 import ArquivosControle from "@/components/my/system/rh/arquivos-controle";
 import Cadastrar from "@/components/my/system/rh/cadastrar";
+import Anotacoes from "@/components/my/system/rh/anotacoes";
 
 
 export default function Rh() {
@@ -22,7 +23,10 @@ export default function Rh() {
                 <NavBar.Root>
                     <NavBar.Section title={"RH"} testeRole={acessos?.rolesRH.delegado}>
                         <NavBar.Item icon={<UserSearch className="w-[20px]"/>} title={"Anotações"}
-                                     action={() => Router.push("/rh")}
+                                     action={() => {
+                                         Router.push("/rh")
+                                         selectPage.setPage("Anotações")
+                                     }}
                                      testeRole={acessos?.rolesRH.delegado}/>
                         <NavBar.Item icon={<Folders className="w-[20px]"/>} title={"Arquivos"}
                                      action={() => {
@@ -42,6 +46,7 @@ export default function Rh() {
                 <ContainerContext.Root>
                     {selectPage.page === "Arquivos" && <ArquivosControle/>}
                     {selectPage.page === "Cadastro" && <Cadastrar/>}
+                    {selectPage.page === "Anotações" && <Anotacoes/>}
                 </ContainerContext.Root>
             </ContainerMain.Root>
         </>

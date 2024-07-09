@@ -13,7 +13,8 @@ type AuthContextType = {
     singIn: (dadosLogin: { login: string, password: string }) => void,
     disconnect: () => void,
     host: string,
-    searchParams: ReadonlyURLSearchParams
+    searchParams: ReadonlyURLSearchParams,
+    configToken: { headers: {} }
 }
 
 type ResponseSingIn = {
@@ -36,10 +37,18 @@ export function AuthProvider({children}: { children: ReactNode }) {
     const isAuthenticated = !!user
     const displayLounding = stateLoundingGlobal((state: any) => state)
     const searchParams = useSearchParams()
+    const [configToken, setConfigToken] = useState({
+        headers: {}
+    })
 
     useEffect(() => {
         const {'quality-token': token} = parseCookies()
         if (token) {
+            setConfigToken({
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
             axios.get(`${host}/auth/revalidate?token=${token}`).then((response) => {
                 const {data}: { data: ResponseRevalidate } = response
                 setCookie(undefined, "quality-user", JSON.stringify(data.user), {
@@ -106,7 +115,7 @@ export function AuthProvider({children}: { children: ReactNode }) {
             acessos,
             isAuthenticated,
             singIn,
-            disconnect, host, searchParams
+            disconnect, host, searchParams, configToken
         }}>
             {children}
         </AuthContext.Provider>

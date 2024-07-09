@@ -1,7 +1,7 @@
 import {AcessoModel, InfoColaborador, ResponseSocketSolicitacaoTiDTO, SolicitcaoTiDTO} from "@/lib/models";
 import {Avatar, AvatarImage} from "@/components/ui/avatar";
 import {alterNomeCompletoParaNomeSobrenome, formatDateTimeUser} from "@/lib/utils";
-import React, {ChangeEvent, ChangeEventHandler, useCallback, useContext} from "react";
+import React, {ChangeEvent, ChangeEventHandler, useCallback, useContext, useEffect, useState} from "react";
 import {useQuery, useQueryClient} from "react-query";
 import axios from "axios";
 import {AuthContext} from "@/contexts/AuthContext";
@@ -17,21 +17,29 @@ type ListColaboradoresAtivosProps = {
     tipoSelect?: boolean
 }
 
+type filtroProps = {
+    nome: string
+    tipo: string
+}
+
 export default function ListColaboradoresAtivos({tipoSelect}: ListColaboradoresAtivosProps) {
     const queryClient = useQueryClient();
-    const {host, user, acessos} = useContext(AuthContext)
+    const {host, configToken, user, acessos} = useContext(AuthContext)
     const roleSelect = roleColaboradorSelectGlobal<roleColaboradorSelectGlobalProps>((state: any) => state)
     const colaboradorSelect = colaboradorSelectGlobal<colaboradorSelectGlobalProps>((state: any) => state)
-
+    const [filtro, setFiltro] = useState<filtroProps>({
+        tipo: "Todos",
+        nome: ""
+    })
     const {data: colaboradores} = useQuery({
-        queryKey: ["colaboradoresList"],
+        queryKey: ["colaboradoresList", filtro],
         queryFn: async (): Promise<InfoColaborador[]> => {
-            return await axios.get(`${host}/colaborador/find/ativos`).then((response) => {
+            return axios.get(`${host}/colaborador/find/colaboradores?nome=${filtro?.nome}&tipo=${filtro?.tipo}`, configToken).then((response) => {
                 const solicitantes: InfoColaborador[] = response.data
                 return solicitantes
             })
         },
-
+        enabled: !!filtro
     })
 
     const joinAcesso = async (colaborador: InfoColaborador | null) => {
@@ -42,21 +50,18 @@ export default function ListColaboradoresAtivos({tipoSelect}: ListColaboradoresA
         })
     }
 
-    const filtrarColaborador = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-        const {value} = e.target
+    const alterFilter = (e: ChangeEvent<any>) => {
+        const {name, value} = e.target
+        setFiltro((prevState: any) => ({
+            ...prevState,
+            [name]: value
+        }))
+    }
 
-        const listaFiltrada = colaboradores?.filter((colaborador) => {
-            return (
-                value.length !== 0 ? alterNomeCompletoParaNomeSobrenome(colaborador.nomeCompleto)?.toLowerCase().includes(value.toLowerCase()) : true
-            )
-        })
 
-        if (value === "") {
-            queryClient.fetchQuery(["colaboradoresList"])
-        }
-
-        queryClient.setQueryData(["colaboradoresList"], listaFiltrada)
-    }, [colaboradores, queryClient])
+    useEffect(() => {
+        queryClient.fetchQuery(["colaboradoresList", filtro])
+    }, [filtro, queryClient]);
 
     return (
         <>
@@ -72,27 +77,31 @@ export default function ListColaboradoresAtivos({tipoSelect}: ListColaboradoresA
                         <div className="absolute  flex flex-col gap-3 w-full">
                             <span className="sticky top-0 w-full z-50 h-full flex flex-col gap-2 bg-white py-2">
                                 <>
-                            <Input onChange={filtrarColaborador} name="nomeCompleto" placeholder="Nome sobrenome"
+                            <Input onChange={alterFilter} value={filtro?.nome} name="nome"
+                                   placeholder="Nome sobrenome"
                                    className="border focus-visible:ring-0   bg-white "/>
                                 <Search className="absolute top-4 stroke-stone-500 right-5"/>
                                 </>
                                 {tipoSelect && (
                                     <>
                                         <select
-                                            value=""
+                                            onChange={alterFilter}
+                                            value={filtro?.tipo}
+                                            name="tipo"
                                             className="border focus-visible:ring-0   bg-white lex h-10 w-full rounded-md !border-stone-600 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50">
-                                            <option value="" disabled>Tipo colaborador</option>
+                                            <option value="TODOS" selected>Todos</option>
                                             <option value="CLT">CLT</option>
                                             <option value="ESTAGIARIO">Estagiario</option>
                                             <option value="TERCEIRIZADO">Terceirizado</option>
-                                            <option value="Todos">Todos</option>
+                                            <option value="DESLIGADO">Desligado</option>
                                         </select>
                                     </>
                                 )}
 
                             </span>
-                            {colaboradores?.sort((a: any, b: any) => a.id - b.id
-                            ).map((colaborador: InfoColaborador, i) => {
+                            {colaboradores?.sort((a, b) => {
+                                return a.nomeCompleto! >= b.nomeCompleto! ? 1 : -1;
+                            }).map((colaborador: InfoColaborador, i) => {
                                 return (
                                     <button key={i}
                                             onClick={() => joinAcesso(colaborador)}

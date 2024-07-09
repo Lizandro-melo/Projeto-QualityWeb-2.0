@@ -1,8 +1,7 @@
 package br.com.grupoqualityambiental.backend.controller.rh.doc;
 
 import br.com.grupoqualityambiental.backend.dto.rh.SubstituirDocRhDTO;
-import br.com.grupoqualityambiental.backend.models.rh.DocRhModels;
-import br.com.grupoqualityambiental.backend.service.rh.doc.UpdateRhService;
+import br.com.grupoqualityambiental.backend.service.rh.doc.UpdateDocRhService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 )
 public class UpdateRhController {
     @Autowired
-    private UpdateRhService updateRhService;
+    private UpdateDocRhService updateRhService;
 
 
     @PostMapping(

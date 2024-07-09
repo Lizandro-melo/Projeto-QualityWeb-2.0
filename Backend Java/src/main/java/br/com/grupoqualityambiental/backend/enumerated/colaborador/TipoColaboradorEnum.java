@@ -4,7 +4,8 @@ public enum TipoColaboradorEnum {
     CLT("clt"),
     ESTAGIARIO("estagiario"),
     TERCEIRIZADO("terceirizado"),
-    ;
+    DESLIGADO("desligado"),
+    TODOS("todos"),;
 
     private String tipo;
 

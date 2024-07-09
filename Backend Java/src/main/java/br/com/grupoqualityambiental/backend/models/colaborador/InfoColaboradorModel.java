@@ -32,7 +32,7 @@ public class InfoColaboradorModel {
     private String nomeMaterno;
     private String cep;
     @Column(name = "data_nascimento")
-    private LocalDate DataNascimento;
+    private LocalDate dataNascimento;
     @Column(name = "dir_foto")
     private String dirFoto;
     @Enumerated(EnumType.STRING)

@@ -287,7 +287,7 @@ function TicketsSendMensagem() {
         for (let i = 0; i < anexoListItens.length; i++) {
             const formData = new FormData();
             formData.append("file", anexoListItens[i]);
-            formData.append("dir", "C:/Users/paralamas/Desktop/qualityweb2/public/assets/arquivosTicket");
+            formData.append("dir", "C:/Users/paralamas/Desktop/Projeto QualityWeb 2.0/Frontend Next/public/assets/arquivosTicket");
 
             try {
                 const response = await axios.post(`${host}/suporte/create/update/files`, formData);
