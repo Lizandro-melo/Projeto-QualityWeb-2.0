@@ -216,6 +216,7 @@ export type InfoMEIColaboradorModel = {
     dataDemissao: string
     empresa: EmpresaColaboradorModel
     setor: SetorColaboradorModel
+    status: boolean
 }
 
 export type InfoColaboradorCompletoDTO = {

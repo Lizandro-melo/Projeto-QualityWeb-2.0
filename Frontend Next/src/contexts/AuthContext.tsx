@@ -14,7 +14,7 @@ type AuthContextType = {
     disconnect: () => void,
     host: string,
     searchParams: ReadonlyURLSearchParams,
-    configToken: { headers: {} }
+    configToken: object | undefined
 }
 
 type ResponseSingIn = {

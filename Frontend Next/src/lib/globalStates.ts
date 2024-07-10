@@ -1,6 +1,6 @@
 import {create} from "zustand"
 import {
-    AcessoModel, DocRhModels, InfoColaborador,
+    AcessoModel, AnotacaoRhModels, DocRhModels, InfoColaborador,
     MensagemTiDTO,
     ResponseSocketSolicitacaoTiDTO,
     SolicitcaoTiDTO
@@ -205,5 +205,24 @@ export const pageSelectRhGlobal = create<pageSelectProps>((set) => ({
     page: "",
     setPage: (page: string) => set((state: any) => ({
         page: page
+    }))
+}))
+
+
+export type AnotacaoSelectGlobalProps = {
+    anotacao: AnotacaoRhModels | null
+    setAnotacao: (anotacao: AnotacaoRhModels | null) => void
+}
+export const anotacaoSelectGlobal = create<AnotacaoSelectGlobalProps>((set) => ({
+    anotacao: null,
+    setAnotacao: (anotacao: AnotacaoRhModels | null) => set((state) => ({
+        anotacao: anotacao
+    }))
+}))
+
+export const stateModalAnotacaoGlobal = create<stateModalProps>((set) => ({
+    stateModal: true,
+    alterState: () => set((state) => ({
+        stateModal: !state.stateModal,
     }))
 }))

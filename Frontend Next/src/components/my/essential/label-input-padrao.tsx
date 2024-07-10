@@ -18,17 +18,27 @@ type LabelInputPadraoRootProps = {
     width: number
     textArea?: boolean
     required?: boolean
+    value?: string
 }
 
-function LabelInputPadraoRoot({title, name, type, register, width, textArea, required}: LabelInputPadraoRootProps) {
+function LabelInputPadraoRoot({
+                                  title,
+                                  name,
+                                  type,
+                                  register,
+                                  width,
+                                  textArea,
+                                  required,
+                                  value
+                              }: LabelInputPadraoRootProps) {
     return (
         <div className={cn("flex flex-col gap-4", `w-[${width}%]`)}>
             <Label htmlFor={name}>{title}</Label>
             {!textArea && (
-                <Input {...register(name)} id={name} name={name} type={type} required={required}/>
+                <Input {...register(name)} id={name} name={name} type={type} required={required} value={value}/>
             )}
             {textArea && (
-                <Textarea {...register(name)} id={name} name={name}/>
+                <Textarea {...register(name)} id={name} name={name} value={value}/>
             )}
         </div>
     )
