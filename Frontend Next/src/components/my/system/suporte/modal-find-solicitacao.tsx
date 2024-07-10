@@ -60,7 +60,7 @@ type filterProps = {
 
 function ListaSolicitacoes() {
 
-    const {host, user, acessos} = useContext(AuthContext)
+    const {host, user, acessos, configToken} = useContext(AuthContext)
     const queryClient = useQueryClient();
     const displayLounding = stateLoundingGlobal<stateLoundingGlobalProps>((state: any) => state)
     const selectSolicitacao = solicitacaoSelectGlobal<solicitacaoSelectGlobalProps>((state: any) => state)
@@ -68,7 +68,7 @@ function ListaSolicitacoes() {
     const {data: solicitacoes} = useQuery({
         queryKey: ["solicitacoesHistory"],
         queryFn: async (): Promise<SolicitacaoTiWithMotivoDTO[]> => {
-            return await axios.get(`${host}/suporte/find/solicitacao/all`).then((response) => {
+            return await axios.get(`${host}/suporte/find/solicitacao/all`, configToken).then((response) => {
                 const solicitacoes: SolicitacaoTiWithMotivoDTO[] = response.data.map((solicitacao: SolicitacaoTiWithMotivoDTO) => {
                     if ((solicitacao.status === "FINALIZADO" && !solicitacao.motivo)) {
                         solicitacao.motivo = "Pulado"
@@ -82,7 +82,7 @@ function ListaSolicitacoes() {
     const {data: solicitantes} = useQuery({
         queryKey: ["solicitantesHistory"],
         queryFn: async (): Promise<InfoColaborador[]> => {
-            return await axios.get(`${host}/colaborador/find/ativos`).then((response) => {
+            return await axios.get(`${host}/colaborador/find/ativos`, configToken).then((response) => {
                 const solicitantes: InfoColaborador[] = response.data
                 return solicitantes
             })
@@ -91,7 +91,7 @@ function ListaSolicitacoes() {
     const {data: categorias} = useQuery({
         queryKey: ["categorias"],
         queryFn: async () => {
-            return await axios.get(`${host}/suporte/find/classificar/categorias/all`).then(response => {
+            return await axios.get(`${host}/suporte/find/classificar/categorias/all`, configToken).then(response => {
                 const categorias: CategoriaClassificacaoTiModels[] = response.data
                 return categorias
             })
@@ -150,7 +150,7 @@ function ListaSolicitacoes() {
     const joinSolicitacao = async (idSolicitacao: number | undefined) => {
         displayLounding.setDisplayLounding()
         await new Promise(resolve => setTimeout(resolve, 500))
-        await axios.get(`${host}/suporte/find/solicitacao/exatc?id=${idSolicitacao}`).then(async (response) => {
+        await axios.get(`${host}/suporte/find/solicitacao/exatc?id=${idSolicitacao}`, configToken).then(async (response) => {
             const solicitacaoSelect: ResponseSocketSolicitacaoTiDTO = response.data
             selectSolicitacao.setSelect(solicitacaoSelect);
             displayLounding.setDisplaySuccess(`Solicitacão ${idSolicitacao}, carregada com sucesso!`)

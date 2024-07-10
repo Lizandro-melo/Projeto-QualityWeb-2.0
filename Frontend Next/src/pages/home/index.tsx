@@ -1,6 +1,6 @@
 import {ContainerMain} from "@/components/my/essential/container-main";
 import {NavBar} from "@/components/my/essential/nav-bar";
-import {Folders, HomeIcon, MessageCircleQuestion, UserSearch} from "lucide-react";
+import {Folders, HomeIcon, MessageCircleQuestion, UserPlus, UserSearch} from "lucide-react";
 import {ContainerContext} from "@/components/my/essential/ContainerContext";
 import Router from "next/router";
 import React, {useContext} from "react";
@@ -19,16 +19,25 @@ export default function Home() {
                                      icon={<MessageCircleQuestion className="w-[20px]"/>} title={"Suporte"}
                                      testeRole={true}/>
                     </NavBar.Section>
-                    <NavBar.Section title={"RH"} testeRole={acessos?.rolesRH?.delegado}>
+                    <NavBar.Section title={"RH"} testeRole={acessos?.rolesRH.delegado}>
                         <NavBar.Item icon={<UserSearch className="w-[20px]"/>} title={"Anotações"}
-                                     action={() => Router.push("/rh")}
-                                     testeRole={acessos?.rolesRH?.delegado}/>
+                                     action={() => {
+                                         Router.push("/rh")
+                                         selectPage.setPage("Anotações")
+                                     }}
+                                     testeRole={acessos?.rolesRH.delegado}/>
                         <NavBar.Item icon={<Folders className="w-[20px]"/>} title={"Arquivos"}
                                      action={() => {
                                          Router.push("/rh")
                                          selectPage.setPage("Arquivos")
                                      }}
-                                     testeRole={acessos?.rolesRH?.delegado}/>
+                                     testeRole={acessos?.rolesRH.delegado}/>
+                        <NavBar.Item icon={<UserPlus className="w-[20px]"/>} title={"Cadastro"}
+                                     action={() => {
+                                         Router.push("/rh")
+                                         selectPage.setPage("Cadastro")
+                                     }}
+                                     testeRole={acessos?.rolesRH.delegado}/>
                     </NavBar.Section>
                 </NavBar.Root>
                 <ContainerContext.Root/>

@@ -44,13 +44,28 @@ export const stateLoundingGlobal = create<stateLoundingGlobalProps>((set) => ({
     })),
 }))
 
-export const stateNavBarGlobal = create((set) => ({
+export type stateBarGlobalprops = {
+    stateNavBar: boolean
+    alterState: () => void
+    setBool: (bool: boolean) => void
+}
+export const stateNavBarGlobal = create<stateBarGlobalprops>((set) => ({
     stateNavBar: true,
     alterState: () => set((state: any) => ({
         stateNavBar: !state.stateNavBar,
     })),
-    setFalse: () => set((state: any) => ({
-        stateNavBar: false,
+    setBool: (bool: boolean) => set((state: any) => ({
+        stateNavBar: bool,
+    }))
+}))
+
+export const stateListColaboradorBarGlobal = create<stateBarGlobalprops>((set) => ({
+    stateNavBar: true,
+    alterState: () => set((state: any) => ({
+        stateNavBar: !state.stateNavBar,
+    })),
+    setBool: (bool: boolean) => set((state: any) => ({
+        stateNavBar: bool,
     }))
 }))
 

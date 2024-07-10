@@ -23,7 +23,7 @@ type ListSolicitacoesProps = {}
 export default function ListSolicitacoes() {
 
 
-    const {acessos, user, host} = useContext(AuthContext)
+    const {acessos, user, host, configToken} = useContext(AuthContext)
     const selectSolicitacao = solicitacaoSelectGlobal<solicitacaoSelectGlobalProps>((state: any) => state)
     const {data: solicitacoes} = useQuery({
         queryKey: ["solicitacoes"],
@@ -31,7 +31,7 @@ export default function ListSolicitacoes() {
             if (!acessos) {
                 return;
             }
-            return await axios.get(`${host}/suporte/find/solicitacao`).then((response) => {
+            return await axios.get(`${host}/suporte/find/solicitacao`, configToken).then((response) => {
                 return insertSolicitacoes(response.data)
             })
         },
@@ -48,7 +48,7 @@ export default function ListSolicitacoes() {
     }
 
     const joinSolicitacao = async (idSolicitacao: number | undefined) => {
-        await axios.get(`${host}/suporte/find/solicitacao/exatc?id=${idSolicitacao}`).then((response) => {
+        await axios.get(`${host}/suporte/find/solicitacao/exatc?id=${idSolicitacao}`, configToken).then((response) => {
             const solicitacaoSelect: ResponseSocketSolicitacaoTiDTO = response.data
             selectSolicitacao.setSelect(solicitacaoSelect);
         })

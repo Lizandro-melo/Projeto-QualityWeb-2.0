@@ -26,7 +26,7 @@ public class InfoEstagiarioColaboradorModel {
     private EmpresaColaboradorModel empresa;
     @JoinColumn(name = "fk_setor")
     @OneToOne
-    private EmpresaColaboradorModel setor;
+    private SetorColaboradorModel setor;
     private Boolean status;
 }
 

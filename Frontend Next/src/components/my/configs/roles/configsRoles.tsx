@@ -6,7 +6,7 @@ import {Input} from "@/components/ui/input";
 import {
     colaboradorSelectGlobal, colaboradorSelectGlobalProps,
     roleColaboradorSelectGlobal,
-    roleColaboradorSelectGlobalProps,
+    roleColaboradorSelectGlobalProps, stateBarGlobalprops, stateListColaboradorBarGlobal,
     stateLoundingGlobal,
     stateLoundingGlobalProps
 } from "@/lib/globalStates";
@@ -18,6 +18,7 @@ import axios from "axios";
 import {AuthContext} from "@/contexts/AuthContext";
 import {CircleDotDashed, CircleX} from "lucide-react";
 import {cn} from "@/lib/utils";
+import ContainerSystem from "@/components/my/essential/container-system";
 
 
 export function ConfigsRolesRoot() {
@@ -39,8 +40,8 @@ function RolesColaboradores() {
 }
 
 function RolesOptions() {
-
-    const {host, user, acessos} = useContext(AuthContext)
+    const state = stateListColaboradorBarGlobal<stateBarGlobalprops>((state: any) => state);
+    const {host, configToken} = useContext(AuthContext)
     const roleSelect = roleColaboradorSelectGlobal<roleColaboradorSelectGlobalProps>((state: any) => state)
     const [rolesTI, setRolesTI] = useState<TiAcessoModel | null>()
     const [rolesRH, setRolesRH] = useState<RhAcessoModel | null>()
@@ -86,7 +87,7 @@ function RolesOptions() {
             rolesRH: rolesRH
         }
         if (JSON.stringify(acessos) != JSON.stringify(roleSelect.role)) {
-            await axios.put(`${host}/sistema/upload/roles`, acessos).then(async (response) => {
+            await axios.put(`${host}/sistema/upload/roles`, acessos, configToken).then(async (response) => {
                 displayLounding.setDisplaySuccess(response.data)
                 await new Promise(resolve => setTimeout(resolve, 1500))
                 displayLounding.setDisplayReset()
@@ -104,7 +105,7 @@ function RolesOptions() {
     }
 
     const redefinirRoles = async () => {
-        await axios.get(`${host}/colaborador/find/roles?id=${roleSelect.role?.referentColaborador}`).then((response) => {
+        await axios.get(`${host}/colaborador/find/roles?id=${roleSelect.role?.referentColaborador}`, configToken).then((response) => {
             const role: AcessoModel = response.data
             roleSelect.setSelect(role)
         }).then(async () => {
@@ -121,11 +122,11 @@ function RolesOptions() {
     const configurarRoles = async () => {
         displayLounding.setDisplayLounding()
         await new Promise(resolve => setTimeout(resolve, 500))
-        await axios.get(`${host}/sistema/upload/create/acesso?id=${colaboradorSelect.colaborador?.fkAuth}`).then(async (response) => {
+        await axios.get(`${host}/sistema/upload/create/acesso?id=${colaboradorSelect.colaborador?.fkAuth}`, configToken).then(async (response) => {
             displayLounding.setDisplaySuccess(response.data)
             await new Promise(resolve => setTimeout(resolve, 1500))
             displayLounding.setDisplayReset()
-            await axios.get(`${host}/colaborador/find/roles?id=${colaboradorSelect.colaborador?.fkAuth}`).then((response) => {
+            await axios.get(`${host}/colaborador/find/roles?id=${colaboradorSelect.colaborador?.fkAuth}`, configToken).then((response) => {
                 const role: AcessoModel = response.data
                 roleSelect.setSelect(role)
             })
@@ -138,7 +139,8 @@ function RolesOptions() {
 
     return (
         <>
-            <div className="h-full w-[80%] rounded-r-md relative overflow-hidden px-10">
+            <div onClick={() => state.setBool(false)}
+                 className="h-full w-[80%] rounded-r-md relative overflow-hidden px-10">
                 {(!colaboradorSelect.colaborador) && (
                     <div
                         className="w-full bg-white h-full absolute opacity-70 z-[60] -mx-10 flex items-center justify-center">

@@ -20,7 +20,7 @@ type List = {
 }
 export default function ListAnexosBaixar({list, height}: List) {
 
-    const {host} = useContext(AuthContext)
+    const {host, configToken} = useContext(AuthContext)
     const displayLounding = stateLoundingGlobal((state: any) => state);
 
     return (
@@ -34,7 +34,7 @@ export default function ListAnexosBaixar({list, height}: List) {
                         <a key={i}
                            onClick={async () => {
                                displayLounding.setDisplayLounding();
-                               await axios.get(`${host}/suporte/find/download/arquivo?name=${fileName}`).then(() => {
+                               await axios.get(`${host}/suporte/find/download/arquivo?name=${fileName}`, configToken).then(() => {
                                    displayLounding.setDisplaySuccess("Baixado");
                                    location.href = `${host}/suporte/find/download/arquivo?name=${fileName}`
                                    displayLounding.setDisplayReset();

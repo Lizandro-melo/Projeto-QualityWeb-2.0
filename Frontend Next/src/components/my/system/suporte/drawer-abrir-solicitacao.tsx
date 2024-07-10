@@ -23,7 +23,7 @@ export default function DrawerAbrirSolicitacao({setState, state}: {
 }) {
 
     const {register, handleSubmit, reset} = useForm();
-    const {user, host} = useContext(AuthContext);
+    const {user, host, configToken} = useContext(AuthContext);
     const displayLounding = stateLoundingGlobal((state: any) => state);
     const [anexoListItens, setAnexoListItens] = useState<File[]>([]);
 
@@ -35,7 +35,7 @@ export default function DrawerAbrirSolicitacao({setState, state}: {
             formData.append("dir", "C:/Users/paralamas/Desktop/Projeto QualityWeb 2.0/Frontend Next/public/assets/arquivosTicket");
 
             try {
-                const response = await axios.post(`${host}/suporte/create/update/files`, formData);
+                const response = await axios.post(`${host}/suporte/create/update/files`, formData, configToken);
                 updatedAnexos.push(`arquivosTicket/${response.data}`);
             } catch (error) {
                 throw new Error("Falha ao enviar o arquivo");
@@ -66,7 +66,7 @@ export default function DrawerAbrirSolicitacao({setState, state}: {
             anexos: updatedAnexos.length === 0 ? null : JSON.stringify(updatedAnexos),
         };
         await axios
-            .post(`${host}/suporte/create/solicitacao`, solicitacao)
+            .post(`${host}/suporte/create/solicitacao`, solicitacao, configToken)
             .then(async (response) => {
                 displayLounding.setDisplaySuccess(response.data);
                 await new Promise((resolve) => setTimeout(resolve, 1000));

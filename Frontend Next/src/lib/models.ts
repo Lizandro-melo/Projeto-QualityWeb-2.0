@@ -161,7 +161,117 @@ export type SubstituirDocRhDTO = {
     docSubstituto: DocRhModels | null
 }
 
+export type EmpresaColaboradorModel = {
+    id: number
+    nome: string
+}
+
+export type SetorColaboradorModel = {
+    id: number
+    nome: string
+}
+
 export type DocExpirandoAlertRhDTO = {
     doc: DocRhModels | null,
     diasRestantes: number
 }
+
+export type ContatoColaboradorModel = {
+    id: number
+    colaboradorReferent: InfoColaborador
+    tipo: string
+    nCelular: string
+    nfixo: string
+    email: string
+}
+
+export type ContaBancariaColaboradorModel = {
+    id: number
+    colaboradorReferent: InfoColaborador
+    nomeBanco: string
+    numeroConta: string
+    numeroAgencia: string
+}
+
+export type InfoCLTColaboradorModel = {
+    id: number
+    dataAdmissao: string
+    dataDemissao: string
+    empresa: EmpresaColaboradorModel
+    setor: SetorColaboradorModel
+}
+
+export type InfoEstagiarioColaboradorModel = {
+    id: number
+    dataAdmissao: string
+    dataDemissao: string
+    empresa: EmpresaColaboradorModel
+    setor: SetorColaboradorModel
+    status: boolean
+}
+
+export type InfoMEIColaboradorModel = {
+    id: number
+    dataAdmissao: string
+    dataDemissao: string
+    empresa: EmpresaColaboradorModel
+    setor: SetorColaboradorModel
+}
+
+export type InfoColaboradorCompletoDTO = {
+    infoPessoais: InfoColaborador
+    contatos: ContatoColaboradorModel[]
+    contasBancarias: ContaBancariaColaboradorModel[]
+    infoCLT: InfoCLTColaboradorModel
+    infoEstagiario: InfoEstagiarioColaboradorModel
+    infoMEI: InfoMEIColaboradorModel
+}
+
+export type ContabilizacaoDadosAnotacao = {
+    atestado: number
+    ferias: number
+    faltou: number
+    suspensao: number
+    licenca: number
+    atestadoHora: number
+    advEscrita: number
+    advVerbal: number
+    horasExtras: number
+    bancoHoras: number
+    atrasos: number
+    atrasoTempo: number
+}
+
+export type AnotacaoRhModels = {
+    id: number;
+    responsavel: number;
+    colaboradorReferent: number;
+    anotacao: string;
+    atestado: boolean;
+    ferias: boolean;
+    faltou: boolean;
+    suspensao: boolean;
+    licenca: boolean;
+    atestadoHora: boolean;
+    advEscrita: boolean;
+    advVerbal: boolean;
+    horaExtra: number;
+    dataInicio: string;
+    dataFinal: string;
+    advEscritaData: string;
+    bancoPositivo: number;
+    bancoNegativo: number;
+    tipoAnotacao: string;
+    motivo: string;
+    atraso: boolean;
+    atrasoTempo: number;
+    status: boolean;
+};
+
+export type ResponseFindAnotacaoRhDTO = {
+    infoColaborador: InfoColaboradorCompletoDTO
+    anotacoes: AnotacaoRhModels[]
+    dadosContabilizados: ContabilizacaoDadosAnotacao
+}
+
+
