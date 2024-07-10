@@ -6,7 +6,6 @@ import br.com.grupoqualityambiental.backend.models.acesso.AcessoModel;
 import br.com.grupoqualityambiental.backend.models.colaborador.*;
 import br.com.grupoqualityambiental.backend.repository.acesso.AcessoRepository;
 import br.com.grupoqualityambiental.backend.repository.colaborador.*;
-import br.com.grupoqualityambiental.backend.repository.postgres.sistemarh.ColaboradorSistemaRhRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,8 +21,6 @@ public class FindColaboradorService {
     private AuthColaboradorRepository authColaboradorRepository;
     @Autowired
     private AcessoRepository acessoRepository;
-    @Autowired
-    private ColaboradorSistemaRhRepository colaboradorSistemaRhRepository;
     @Autowired
     private ContatoColaboradorRepository contatoColaboradorRepository;
     @Autowired

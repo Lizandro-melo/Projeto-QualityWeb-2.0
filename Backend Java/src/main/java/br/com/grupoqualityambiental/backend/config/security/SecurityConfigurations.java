@@ -28,6 +28,8 @@ public class SecurityConfigurations {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/auth/revalidate").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/suporte/find/download").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/rh/find/download/arquivo").permitAll()
                         .anyRequest().hasRole("USER")
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

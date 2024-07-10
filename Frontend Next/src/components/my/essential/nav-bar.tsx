@@ -21,7 +21,12 @@ function NavBarRoot({children}: NavBarRootProps) {
 
     return (
         <div
-            className={cn("w-[20%] relative h-full bg-slate-950 flex flex-col items-center py-[20px] transition-all gap-3", !state.stateNavBar && "!w-[10%] max-md:!w-[10%]")}>
+            onClick={() => {
+                if (!state.stateNavBar) {
+                    state.setBool(true)
+                }
+            }}
+            className={cn("w-[20%] relative h-full bg-slate-950 flex flex-col items-center py-[20px] transition-all gap-3", !state.stateNavBar && "!w-[65px] max-md:!w-[65px]")}>
             <NavBarButtonState/>
             {children}
         </div>
@@ -65,7 +70,9 @@ type NavBarSectionProps = {
 function NavBarSection({title, children, testeRole}: NavBarSectionProps) {
     if (testeRole) {
         return (
-            <div className={cn("w-[85%]")}>
+            <div
+
+                className={cn("w-[85%]")}>
                 <div
                     className="bg-slate-950 border-none border w-full h-[35px] text-white flex items-center justify-center">
                     <span className="text-xs">{title}</span>

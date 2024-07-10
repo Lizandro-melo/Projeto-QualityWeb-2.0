@@ -87,7 +87,7 @@ function TicketsSolicitacao() {
     const stateModalDeletarTicket = stateModalDeletarTicketGlobal<stateModalProps>((state) => state)
     const [showButton, setShowButton] = useState(false);
     const selectSolicitacao = solicitacaoSelectGlobal<solicitacaoSelectGlobalProps>((state: any) => state)
-    const {host, user, acessos} = useContext(AuthContext)
+    const {host, user, acessos, configToken} = useContext(AuthContext)
     const refDivMensagens = useRef<any>()
     const {data} = useQuery({
         queryKey: ["mensagens"],
@@ -95,7 +95,7 @@ function TicketsSolicitacao() {
             if (!selectSolicitacao.solicitacaoSelect) {
                 return undefined
             }
-            await axios.get(`${host}/suporte/find/solicitacao/exatc?id=${selectSolicitacao.solicitacaoSelect.id}`).then((response) => {
+            await axios.get(`${host}/suporte/find/solicitacao/exatc?id=${selectSolicitacao.solicitacaoSelect.id}`, configToken).then((response) => {
                 const solicitacaoSelect: ResponseSocketSolicitacaoTiDTO = response.data
                 selectSolicitacao.setSelect(solicitacaoSelect)
             }).catch(() => {
@@ -275,7 +275,7 @@ function TicketsSolicitacao() {
 function TicketsSendMensagem() {
 
     const [state, setState] = useState(false)
-    const {user, host} = useContext(AuthContext)
+    const {user, host, configToken} = useContext(AuthContext)
     const selectSolicitacao = solicitacaoSelectGlobal<solicitacaoSelectGlobalProps>((state: any) => state)
     const {register, handleSubmit, reset} = useForm()
     const [anexos, setAnexos] = useState([])
@@ -290,7 +290,7 @@ function TicketsSendMensagem() {
             formData.append("dir", "C:/Users/paralamas/Desktop/Projeto QualityWeb 2.0/Frontend Next/public/assets/arquivosTicket");
 
             try {
-                const response = await axios.post(`${host}/suporte/create/update/files`, formData);
+                const response = await axios.post(`${host}/suporte/create/update/files`, formData, configToken);
                 updatedAnexos.push(`arquivosTicket/${response.data}`);
                 setAnexoListItens([])
             } catch (error) {
@@ -323,7 +323,7 @@ function TicketsSendMensagem() {
             responsavel: user?.fkAuth,
             anexos: updatedAnexos.length === 0 ? null : JSON.stringify(updatedAnexos),
         }
-        await axios.post(`${host}/suporte/create/mensagem`, mensagem).then(async (response) => {
+        await axios.post(`${host}/suporte/create/mensagem`, mensagem, configToken).then(async (response) => {
             setState(false)
             reset()
         }).catch(async (err) => {
@@ -379,13 +379,13 @@ export function ModalDeletarTicket() {
     const state = stateModalDeletarTicketGlobal<stateModalProps>((state) => state)
     const displayLounding = stateLoundingGlobal<stateLoundingGlobalProps>((state: any) => state)
     const selectSolicitacao = solicitacaoSelectGlobal<solicitacaoSelectGlobalProps>((state: any) => state)
-    const {host} = useContext(AuthContext)
+    const {host, configToken} = useContext(AuthContext)
 
 
     const deletarSolicitacao = async () => {
         displayLounding.setDisplayLounding()
         await new Promise(resolve => setTimeout(resolve, 500))
-        await axios.delete(`${host}/suporte/update/solicitacao?id=${selectSolicitacao.solicitacaoSelect?.id}`).then(async () => {
+        await axios.delete(`${host}/suporte/update/solicitacao?id=${selectSolicitacao.solicitacaoSelect?.id}`, configToken).then(async () => {
             displayLounding.setDisplaySuccess("Solicitação excluída com sucesso!")
             await new Promise(resolve => setTimeout(resolve, 1500))
             displayLounding.setDisplayReset()
@@ -436,7 +436,7 @@ export function ModalClassificarTicket() {
     const {register, handleSubmit, reset} = useForm()
 
     const state = stateModalClassificarTicketGlobal<stateModalProps>((state) => state)
-    const {host, user} = useContext(AuthContext)
+    const {host, user, configToken} = useContext(AuthContext)
 
     const [categorias, setCategorias] = useState<CategoriaClassificacaoTiModels[]>([])
     const [subCategorias, setSubCategorias] = useState<SubcategoriaTiModels[]>([])
@@ -444,7 +444,7 @@ export function ModalClassificarTicket() {
     const {data: grupos} = useQuery({
         queryKey: ["grupos"],
         queryFn: async (): Promise<GrupoClassificacaoTiModels[]> => {
-            return await axios.get(`${host}/suporte/find/classificar/grupos`).then(response => response.data)
+            return await axios.get(`${host}/suporte/find/classificar/grupos`, configToken).then(response => response.data)
         }
     })
 
@@ -457,7 +457,7 @@ export function ModalClassificarTicket() {
             referentSolicitacao: selectSolicitacao.solicitacaoSelect?.id
 
         }
-        await axios.post(`${host}/suporte/create/classificar`, classificacaoEnviar).then(async (response) => {
+        await axios.post(`${host}/suporte/create/classificar`, classificacaoEnviar, configToken).then(async (response) => {
             displayLounding.setDisplaySuccess(response.data)
             await new Promise(resolve => setTimeout(resolve, 1500))
             displayLounding.setDisplayReset()
@@ -478,7 +478,7 @@ export function ModalClassificarTicket() {
         const classificacaoEnviar = {
             referentSolicitacao: selectSolicitacao.solicitacaoSelect?.id
         }
-        await axios.post(`${host}/suporte/create/finalizar`, classificacaoEnviar).then(async (response) => {
+        await axios.post(`${host}/suporte/create/finalizar`, classificacaoEnviar, configToken).then(async (response) => {
             displayLounding.setDisplaySuccess(response.data)
             await new Promise(resolve => setTimeout(resolve, 1500))
             displayLounding.setDisplayReset()
@@ -506,7 +506,7 @@ export function ModalClassificarTicket() {
                             <select
                                 {...register("referentGrupo")}
                                 onChange={async (e) => {
-                                    await axios.get(`${host}/suporte/find/classificar/categorias?id=${e.target.value}`).then(response => setCategorias(response.data))
+                                    await axios.get(`${host}/suporte/find/classificar/categorias?id=${e.target.value}`, configToken).then(response => setCategorias(response.data))
                                 }}
                                 className={classNameSelect} defaultValue="null">
                                 <option disabled value="null">Selecione um grupo</option>
@@ -524,7 +524,7 @@ export function ModalClassificarTicket() {
                                 {...register("referentCategoria")}
                                 title="Para aparecer as categorias, selecione um grupo"
                                 onChange={async (e) => {
-                                    await axios.get(`${host}/suporte/find/classificar/subcategorias?id=${e.target.value}`).then(response => setSubCategorias(response.data))
+                                    await axios.get(`${host}/suporte/find/classificar/subcategorias?id=${e.target.value}`, configToken).then(response => setSubCategorias(response.data))
                                 }}
                                 className={classNameSelect} defaultValue="null">
                                 <option disabled value="null">Selecione uma categoria</option>
@@ -581,7 +581,7 @@ export function ModalReClassificarTicket() {
     const {register, handleSubmit, reset} = useForm()
 
     const state = stateModalReClassificarTicketGlobal<stateModalProps>((state) => state)
-    const {host, user} = useContext(AuthContext)
+    const {host, user, configToken} = useContext(AuthContext)
 
     const [categorias, setCategorias] = useState<CategoriaClassificacaoTiModels[]>([])
     const [subCategorias, setSubCategorias] = useState<SubcategoriaTiModels[]>([])
@@ -589,7 +589,7 @@ export function ModalReClassificarTicket() {
     const {data: grupos} = useQuery({
         queryKey: ["grupos"],
         queryFn: async (): Promise<GrupoClassificacaoTiModels[]> => {
-            return await axios.get(`${host}/suporte/find/classificar/grupos`).then(response => response.data)
+            return await axios.get(`${host}/suporte/find/classificar/grupos`, configToken).then(response => response.data)
         }
     })
 
@@ -602,7 +602,7 @@ export function ModalReClassificarTicket() {
             referentSolicitacao: selectSolicitacao.solicitacaoSelect?.id
 
         }
-        await axios.post(`${host}/suporte/create/reclassificar`, classificacaoEnviar).then(async (response) => {
+        await axios.post(`${host}/suporte/create/reclassificar`, classificacaoEnviar, configToken).then(async (response) => {
             displayLounding.setDisplaySuccess(response.data)
             await new Promise(resolve => setTimeout(resolve, 1500))
             displayLounding.setDisplayReset()
@@ -633,7 +633,7 @@ export function ModalReClassificarTicket() {
                             <select
                                 {...register("referentGrupo")}
                                 onChange={async (e) => {
-                                    await axios.get(`${host}/suporte/find/classificar/categorias?id=${e.target.value}`).then(response => setCategorias(response.data))
+                                    await axios.get(`${host}/suporte/find/classificar/categorias?id=${e.target.value}`, configToken).then(response => setCategorias(response.data))
                                 }}
                                 className={classNameSelect} defaultValue="null">
                                 <option disabled value="null">Selecione um grupo</option>
@@ -651,7 +651,7 @@ export function ModalReClassificarTicket() {
                                 {...register("referentCategoria")}
                                 title="Para aparecer as categorias, selecione um grupo"
                                 onChange={async (e) => {
-                                    await axios.get(`${host}/suporte/find/classificar/subcategorias?id=${e.target.value}`).then(response => setSubCategorias(response.data))
+                                    await axios.get(`${host}/suporte/find/classificar/subcategorias?id=${e.target.value}`, configToken).then(response => setSubCategorias(response.data))
                                 }}
                                 className={classNameSelect} defaultValue="null">
                                 <option disabled value="null">Selecione uma categoria</option>

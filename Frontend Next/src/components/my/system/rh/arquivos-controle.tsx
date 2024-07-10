@@ -22,6 +22,7 @@ import {AuthContext} from "@/contexts/AuthContext";
 import {useQuery, useQueryClient} from "react-query";
 import Router from "next/router";
 import {ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger} from "@/components/ui/context-menu";
+import ContainerSystem from "@/components/my/essential/container-system";
 
 
 export default function ArquivosControle() {
@@ -43,13 +44,13 @@ function ArquivosReferents() {
     const queryClient = useQueryClient();
     const state = stateModalImportDocRhGlobal((state) => state);
     const {colaborador} = colaboradorSelectGlobal<colaboradorSelectGlobalProps>((state: any) => state);
-    const {host} = useContext(AuthContext);
+    const {host, configToken} = useContext(AuthContext);
     const [filter, setFilter] = useState<filterProps>({apelido: "", tipo: ""});
     const {data: docs, refetch: refetchDocs} = useQuery<DocRhModels[]>({
         queryKey: ["docsRh"],
         queryFn: async () => {
             try {
-                const response = await axios.get(`${host}/rh/find/doc?id=${colaborador?.fkAuth}`);
+                const response = await axios.get(`${host}/rh/find/doc?id=${colaborador?.fkAuth}`, configToken);
                 return response.data.map((doc: DocRhModels) => {
                     switch (doc.tipo) {
                         case "IDENTIDADE":
@@ -83,7 +84,7 @@ function ArquivosReferents() {
         queryKey: ["docsAlert"],
         queryFn: async () => {
             try {
-                const response = await axios.get(`${host}/rh/find/doc/alert?id=${colaborador?.fkAuth}`);
+                const response = await axios.get(`${host}/rh/find/doc/alert?id=${colaborador?.fkAuth}`, configToken);
                 return response.data.doc.map((doc: DocRhModels) => {
                     switch (doc.tipo) {
                         case "IDENTIDADE":
@@ -158,42 +159,41 @@ function ArquivosReferents() {
             {colaborador && (
                 <>
                     <ModalImportDocument/>
-                    <div className="h-full w-[80%] rounded-r-md">
-                        <div className="flex justify-start w-full p-5 flex-col h-full">
-                            <div className="w-full flex justify-start mb-5 items-center gap-5">
+                    <ContainerSystem>
+                        <div className="w-full flex justify-start mb-5 items-center gap-5">
 
-                                <div className="flex justify-between items-center bg-stone-300 rounded-full">
-                                    <Avatar>
-                                        <AvatarImage
-                                            src={colaborador?.dirFoto ? colaborador?.dirFoto : 'https://placehold.co/600?text=Foto'}/>
-                                    </Avatar>
-                                    <span
-                                        className="text-center text-sm mx-5">{colaborador?.nomeCompleto}</span>
-                                </div>
-                                <p className="text-stone-500 text-xs">Coloque o mouse por cima do documento para
-                                    pré-visualizalo</p>
-                                <Button type="button"
-                                        className="rounded-full w-[40px] h-[40px] p-[10px] hover:animate-spin-reload transition-all"
-                                        onClick={() => refetchDocs()}
-                                >
-                                    <RotateCw/>
-                                </Button>
+                            <div className="flex justify-between items-center bg-stone-300 rounded-full">
+                                <Avatar>
+                                    <AvatarImage
+                                        src={colaborador?.dirFoto ? colaborador?.dirFoto : 'https://placehold.co/600?text=Foto'}/>
+                                </Avatar>
+                                <span
+                                    className="text-center text-sm mx-5">{colaborador?.nomeCompleto}</span>
                             </div>
+                            <p className="text-stone-500 text-xs">Coloque o mouse por cima do documento para
+                                pré-visualizalo</p>
+                            <Button type="button"
+                                    className="rounded-full w-[40px] h-[40px] p-[10px] hover:animate-spin-reload transition-all"
+                                    onClick={() => refetchDocs()}
+                            >
+                                <RotateCw/>
+                            </Button>
+                        </div>
 
-                            <ScrollArea
-                                className="h-[60%] w-full rounded-md border relative overflow-y-scroll scrowInvivel">
-                                <div className="p-3 absolute w-full">
-                                    <h4 className="mb-4 text-sm font-medium leading-none">Documentos</h4>
-                                    <Table className="relative">
-                                        <TableHeader className="text-xs sticky top-0">
-                                            <TableHead>
-                                                <Input
-                                                    className="border-none bg-transparent focus-visible:!ring-0 text-xs"
-                                                    placeholder="Apelido" type="text" name="apelido"
-                                                    onChange={applyFilter}
-                                                />
-                                            </TableHead>
-                                            <TableHead>
+                        <ScrollArea
+                            className="h-[60%] w-full rounded-md border relative overflow-y-scroll scrowInvivel">
+                            <div className="p-3 absolute w-full">
+                                <h4 className="mb-4 text-sm font-medium leading-none">Documentos</h4>
+                                <Table className="relative">
+                                    <TableHeader className="text-xs sticky top-0">
+                                        <TableHead>
+                                            <Input
+                                                className="border-none bg-transparent focus-visible:!ring-0 text-xs"
+                                                placeholder="Apelido" type="text" name="apelido"
+                                                onChange={applyFilter}
+                                            />
+                                        </TableHead>
+                                        <TableHead>
                                         <span className="flex gap-2 relative items-center justify-between">
                             <Input className="border-none bg-transparent focus-visible:!ring-0 text-xs"
                                    placeholder="Tipo de documento"
@@ -210,91 +210,91 @@ function ArquivosReferents() {
                                             <option value="Contrato">Contrato</option>
                                 </datalist>
                             </span>
-                                            </TableHead>
-                                            <TableHead>
-                                                Data de emissão
-                                            </TableHead>
-                                            <TableHead>
-                                                Data de vencimento
-                                            </TableHead>
-                                            <TableHead>
-                                                Deletar
-                                            </TableHead>
+                                        </TableHead>
+                                        <TableHead>
+                                            Data de emissão
+                                        </TableHead>
+                                        <TableHead>
+                                            Data de vencimento
+                                        </TableHead>
+                                        <TableHead>
+                                            Deletar
+                                        </TableHead>
 
-                                        </TableHeader>
-                                        <TableBody>
-                                            {docs?.sort((a, b) => {
-                                                return a.apelido! >= b.apelido! ? 1 : -1;
-                                            }).map((doc: DocRhModels) => {
-                                                const fileName = `${doc.dir?.split("/")[4]}/${doc.dir?.split("/")[5]}`
-                                                return (
-                                                    <>
-                                                        <TableRow key={doc.id}
-                                                                  className="hover:bg-stone-400 cursor-pointer"
-                                                                  title="Baixar" onClick={() => {
-                                                            Router.push(`${host}/rh/find/download/arquivo?name=${fileName}`, "", {
-                                                                scroll: true
-                                                            })
-                                                        }}>
-                                                            <TableCell>{doc.apelido}</TableCell>
-                                                            <TableCell>{doc.tipo}</TableCell>
-                                                            <TableCell>{doc.dataEmissao}</TableCell>
-                                                            <TableCell>{doc.dataVencimento}</TableCell>
-                                                        </TableRow>
-                                                    </>
-                                                )
-                                            })}
-                                        </TableBody>
-                                    </Table>
-                                </div>
-                            </ScrollArea>
-                            <Button variant="default"
-                                    onClick={() => state.alterState()}
-                                    className="w-full bg-stone-300 h-[5%] text-black hover:bg-stone-300">
-                                Importar um documento
-                            </Button>
-                            <ScrollArea
-                                className="h-[35%] w-full rounded-md border relative overflow-y-scroll scrowInvivel">
-                                <div className="p-3 absolute w-full">
-                                    <h4 className="mb-4 text-sm font-medium leading-none">Alertas</h4>
-                                    <Table>
-                                        <TableHeader>
-                                            <TableHead>
-                                                Apelido
-                                            </TableHead>
-                                            <TableHead>
-                                                Tipo de documento
-                                            </TableHead>
-                                            <TableHead>
-                                                Tempo até o vencimento
-                                            </TableHead>
-                                        </TableHeader>
-                                        <TableBody>
-                                            {docs?.sort((a, b) => {
-                                                return a.apelido! >= b.apelido! ? 1 : -1;
-                                            }).map((doc: DocRhModels) => {
-                                                const fileName = `${doc.dir?.split("/")[4]}/${doc.dir?.split("/")[5]}`
-                                                return (
-                                                    <>
-                                                        <TableRow key={doc.id}
-                                                                  className="hover:bg-stone-400 cursor-pointer"
-                                                                  title="Baixar" onClick={() => {
-                                                            Router.push(`${host}/rh/find/download/arquivo?name=${fileName}`, "", {
-                                                                scroll: true
-                                                            })
-                                                        }}>
-                                                            <TableCell>{doc.apelido}</TableCell>
-                                                            <TableCell>{doc.tipo}</TableCell>
-                                                        </TableRow>
-                                                    </>
-                                                )
-                                            })}
-                                        </TableBody>
-                                    </Table>
-                                </div>
-                            </ScrollArea>
-                        </div>
-                    </div>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {docs?.sort((a, b) => {
+                                            return a.apelido! >= b.apelido! ? 1 : -1;
+                                        }).map((doc: DocRhModels) => {
+                                            const fileName = `${doc.dir?.split("/")[4]}/${doc.dir?.split("/")[5]}`
+                                            return (
+                                                <>
+                                                    <TableRow key={doc.id}
+                                                              className="hover:bg-stone-400 cursor-pointer"
+                                                              title="Baixar" onClick={() => {
+                                                        Router.push(`${host}/rh/find/download/arquivo?name=${fileName}`, "", {
+                                                            scroll: true
+                                                        })
+                                                    }}>
+                                                        <TableCell>{doc.apelido}</TableCell>
+                                                        <TableCell>{doc.tipo}</TableCell>
+                                                        <TableCell>{doc.dataEmissao}</TableCell>
+                                                        <TableCell>{doc.dataVencimento}</TableCell>
+                                                    </TableRow>
+                                                </>
+                                            )
+                                        })}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        </ScrollArea>
+                        <Button variant="default"
+                                onClick={() => state.alterState()}
+                                className="w-full bg-stone-300 h-[5%] text-black hover:bg-stone-300">
+                            Importar um documento
+                        </Button>
+                        <ScrollArea
+                            className="h-[35%] w-full rounded-md border relative overflow-y-scroll scrowInvivel">
+                            <div className="p-3 absolute w-full">
+                                <h4 className="mb-4 text-sm font-medium leading-none">Alertas</h4>
+                                <Table>
+                                    <TableHeader>
+                                        <TableHead>
+                                            Apelido
+                                        </TableHead>
+                                        <TableHead>
+                                            Tipo de documento
+                                        </TableHead>
+                                        <TableHead>
+                                            Tempo até o vencimento
+                                        </TableHead>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {docs?.sort((a, b) => {
+                                            return a.apelido! >= b.apelido! ? 1 : -1;
+                                        }).map((doc: DocRhModels) => {
+                                            const fileName = `${doc.dir?.split("/")[4]}/${doc.dir?.split("/")[5]}`
+                                            return (
+                                                <>
+                                                    <TableRow key={doc.id}
+                                                              className="hover:bg-stone-400 cursor-pointer"
+                                                              title="Baixar" onClick={() => {
+                                                        Router.push(`${host}/rh/find/download/arquivo?name=${fileName}`, "", {
+                                                            scroll: true
+                                                        })
+                                                    }}>
+                                                        <TableCell>{doc.apelido}</TableCell>
+                                                        <TableCell>{doc.tipo}</TableCell>
+                                                    </TableRow>
+                                                </>
+                                            )
+                                        })}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        </ScrollArea>
+                    </ContainerSystem>
+
                 </>
             )}
 
@@ -308,7 +308,7 @@ function ModalImportDocument() {
     const stateImportDocExistente = stateModalImportDocExistenteRhGlobal<stateModalDocExistenteProps>((state) => state)
     const {register, handleSubmit, reset} = useForm()
     const [requeredVencimento, setRequeredVencimento] = useState(false)
-    const {host} = useContext(AuthContext);
+    const {host, configToken} = useContext(AuthContext);
     const displayLounding = stateLoundingGlobal((state: any) => state);
     const [doc, setDoc] = useState<DocRhModels>()
 
@@ -322,7 +322,7 @@ function ModalImportDocument() {
         }
         formData.append("dir", `C:/Users/paralamas/Desktop/Projeto QualityWeb 2.0/Frontend Next/public/assets/rh/doc/${colaboradorSelect.colaborador?.nomeCompleto}`);
 
-        await axios.post(`${host}/rh/update/doc`, formData).then(async (response) => {
+        await axios.post(`${host}/rh/update/doc`, formData, configToken).then(async (response) => {
             setDoc((prevState: any) => ({
                 ...prevState,
                 dir: `/assets/rh/doc/${colaboradorSelect.colaborador?.nomeCompleto}/${response.data}`
@@ -348,7 +348,7 @@ function ModalImportDocument() {
             dir: doc?.dir,
             referentColaborador: colaboradorSelect.colaborador?.fkAuth!
         }
-        await axios.post(`${host}/rh/create/doc`, document).then(async (response) => {
+        await axios.post(`${host}/rh/create/doc`, document, configToken).then(async (response) => {
             displayLounding.setDisplaySuccess(response.data)
             await new Promise((resolve) => setTimeout(resolve, 1500));
             state.alterState()
@@ -489,7 +489,7 @@ function ModalImportDocument() {
 function ModalImportDocExistentes() {
     const state = stateModalImportDocExistenteRhGlobal<stateModalDocExistenteProps>((state) => state)
     const stateModalImport = stateModalImportDocRhGlobal((state) => state)
-    const {host} = useContext(AuthContext);
+    const {host, configToken} = useContext(AuthContext);
     const displayLounding = stateLoundingGlobal((state: any) => state);
 
     const substituirDoc = async () => {
@@ -500,7 +500,7 @@ function ModalImportDocExistentes() {
             docSubstituto: state.docReferent
         }
 
-        await axios.post(`${host}/rh/update/substituir/doc`, docs).then(async (response) => {
+        await axios.post(`${host}/rh/update/substituir/doc`, docs, configToken).then(async (response) => {
             displayLounding.setDisplaySuccess(response.data)
             await new Promise((resolve) => setTimeout(resolve, 1500));
             state.alterState()
