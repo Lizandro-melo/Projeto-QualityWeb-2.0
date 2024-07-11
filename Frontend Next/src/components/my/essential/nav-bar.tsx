@@ -21,7 +21,7 @@ function NavBarRoot({children}: NavBarRootProps) {
 
     return (
         <div
-            onClick={() => {
+            onMouseOver={() => {
                 if (!state.stateNavBar) {
                     state.setBool(true)
                 }
@@ -42,21 +42,7 @@ function NavBarButtonState() {
                 <img src="./assets/logo-grupo-quality-branca.png" alt="" className="w-[40%] mb-5 cursor-pointer"
                      onClick={() => location.href = "/home"}/>
             )}
-            <div className={cn("w-full bg-blue-950 h-[35px] absolute bottom-10 grid place-content-center")}>
-                <span
-                    className={cn("font-semibold text-white whitespace-nowrap max-md:hidden", !state.stateNavBar && "hidden")}>
-                    Esconder Barra
-                </span>
-                <Button
-                    onClick={() => state.alterState()}
-                    className={cn("h-[45px] w-[45px] bg-blue-600 hover:bg-blue-500 absolute rounded-full -right-[22px] -top-[5px]")}>
-                    {state.stateNavBar ? (
-                        <PanelRightOpen className="relative w-[20px] h-[20px]"/>
-                    ) : (
-                        <PanelRightClose className="relative w-[20px] h-[20px]"/>
-                    )}
-                </Button>
-            </div>
+
         </>
     );
 }

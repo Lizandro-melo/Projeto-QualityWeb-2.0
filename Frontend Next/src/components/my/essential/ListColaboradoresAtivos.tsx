@@ -12,6 +12,7 @@ import {
 } from "@/lib/globalStates";
 import {Input} from "@/components/ui/input";
 import {Search} from "lucide-react";
+import {usePathname, useRouter} from "next/navigation";
 
 type ListColaboradoresAtivosProps = {
     tipoSelect?: boolean
@@ -24,23 +25,31 @@ type filtroProps = {
 
 export default function ListColaboradoresAtivos({tipoSelect}: ListColaboradoresAtivosProps) {
     const queryClient = useQueryClient();
-    const {host, configToken} = useContext(AuthContext)
+    const {host, configToken, searchParams} = useContext(AuthContext)
     const roleSelect = roleColaboradorSelectGlobal<roleColaboradorSelectGlobalProps>((state: any) => state)
     const colaboradorSelect = colaboradorSelectGlobal<colaboradorSelectGlobalProps>((state: any) => state)
     const [filtro, setFiltro] = useState<filtroProps>({
         tipo: "Todos",
         nome: ""
     })
+
+    const fetchColaboradores = async (): Promise<InfoColaborador[]> => {
+        try {
+            const response = await axios.get(
+                `${host}/colaborador/find/colaboradores?nome=${filtro?.nome}&tipo=${filtro?.tipo}`,
+                configToken
+            );
+            return response.data;
+        } catch (error) {
+            return [];
+        }
+    };
+
     const {data: colaboradores} = useQuery({
-        queryKey: ["colaboradoresList", filtro],
-        queryFn: async (): Promise<InfoColaborador[]> => {
-            return axios.get(`${host}/colaborador/find/colaboradores?nome=${filtro?.nome}&tipo=${filtro?.tipo}`, configToken).then((response) => {
-                const solicitantes: InfoColaborador[] = response.data
-                return solicitantes
-            })
-        },
-        enabled: !!filtro
-    })
+        queryKey: ['colaboradoresList', filtro],
+        queryFn: fetchColaboradores,
+        enabled: !!filtro && !!configToken
+    });
     const state = stateListColaboradorBarGlobal<stateBarGlobalprops>((state: any) => state);
 
     const joinAcesso = async (colaborador: InfoColaborador | null) => {
@@ -59,10 +68,10 @@ export default function ListColaboradoresAtivos({tipoSelect}: ListColaboradoresA
         }))
     }
 
-
     useEffect(() => {
-        queryClient.fetchQuery(["colaboradoresList", filtro])
+        queryClient.fetchQuery(['colaboradoresList', filtro], fetchColaboradores);
     }, [filtro, queryClient]);
+
 
     return (
         <>
@@ -94,7 +103,7 @@ export default function ListColaboradoresAtivos({tipoSelect}: ListColaboradoresA
                                         <>
                                             <select
                                                 onChange={alterFilter}
-                                                value={filtro?.tipo}
+                                                defaultValue={filtro?.tipo}
                                                 name="tipo"
                                                 className="border focus-visible:ring-0   bg-white lex h-10 w-full rounded-md !border-stone-600 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none  focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50">
                                                 <option value="TODOS" selected>Todos</option>
@@ -114,6 +123,7 @@ export default function ListColaboradoresAtivos({tipoSelect}: ListColaboradoresA
                                 return (
                                     <button key={i}
                                             onClick={() => joinAcesso(colaborador)}
+                                            title={alterNomeCompletoParaNomeSobrenome(colaborador.nomeCompleto)}
                                             className={cn("bg-stone-200 px-2 h-[60px] relative flex items-center hover:bg-stone-300 justify-between transition-all rounded-md w-full active:scale-95", !state.stateNavBar && "!justify-center")}>
                                         <Avatar>
                                             <AvatarImage

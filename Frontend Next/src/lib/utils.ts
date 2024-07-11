@@ -34,3 +34,47 @@ export function alterNomeCompletoParaNomeSobrenome(nomeCompleto: string | undefi
 
     return `${nomeDividido[0]} ${nomeDividido[nomeDividido.length - 1]}`
 }
+
+export function formatarDataInput(
+    dataString: string | null | any,
+): string | null | undefined | any {
+    dataString = dataString;
+    if (dataString === null || dataString === undefined) {
+        return "";
+    }
+
+    var partesData = dataString.split("/");
+    var dia = partesData[0];
+    var mes = partesData[1];
+    var ano = partesData[2];
+
+    var dataFormatada = ano + "-" + mes + "-" + dia;
+    return dataFormatada;
+}
+
+export function formatarDataComum(
+    dataString: string | null | undefined,
+): string | null | any {
+    if (dataString === null || dataString === undefined) {
+        return "";
+    }
+
+    var partesData = dataString.split("-");
+    var dia = partesData[2];
+    var mes = partesData[1];
+    var ano = partesData[0];
+
+    var dataFormatada = dia + "/" + mes + "/" + ano;
+    return dataFormatada;
+}
+
+export const data1MesAtrasInput = () => {
+    const data1Mes = new Date()
+    data1Mes.setDate(data1Mes.getDate() - 30)
+    return formatarDataInput(data1Mes.toLocaleDateString());
+}
+
+export const dataAtualInput = () => {
+    const dataAtual = new Date()
+    return formatarDataInput(dataAtual.toLocaleDateString());
+}
