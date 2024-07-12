@@ -53,5 +53,5 @@ public class AnotacaoRhModels {
     @Column(name = "atraso_tempo")
     private Float atrasoTempo;
     private Boolean status;
-
+    private String anexo;
 }

@@ -221,7 +221,7 @@ export const anotacaoSelectGlobal = create<AnotacaoSelectGlobalProps>((set) => (
 }))
 
 export const stateModalAnotacaoGlobal = create<stateModalProps>((set) => ({
-    stateModal: true,
+    stateModal: false,
     alterState: () => set((state) => ({
         stateModal: !state.stateModal,
     }))

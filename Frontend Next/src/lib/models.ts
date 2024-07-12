@@ -267,6 +267,7 @@ export type AnotacaoRhModels = {
     atraso: boolean;
     atrasoTempo: number;
     status: boolean;
+    anexo: string | null
 };
 
 export type ResponseFindAnotacaoRhDTO = {

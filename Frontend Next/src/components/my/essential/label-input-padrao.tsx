@@ -3,6 +3,7 @@ import {Input} from "@/components/ui/input";
 import {FieldValues, UseFormRegister} from "react-hook-form";
 import {cn} from "@/lib/utils";
 import {Textarea} from "@/components/ui/textarea";
+import {ChangeEvent} from "react";
 
 
 export const LabelInputPadrao = {
@@ -14,11 +15,12 @@ type LabelInputPadraoRootProps = {
     type?: "text" | "password" | "number" | "date",
     name: string,
     title: string,
-    register: UseFormRegister<FieldValues>
+    register?: UseFormRegister<FieldValues>
     width: number
     textArea?: boolean
     required?: boolean
     value?: string
+    change?: (e: ChangeEvent<any>) => void
 }
 
 function LabelInputPadraoRoot({
@@ -29,16 +31,19 @@ function LabelInputPadraoRoot({
                                   width,
                                   textArea,
                                   required,
-                                  value
+                                  value,
+                                  change
                               }: LabelInputPadraoRootProps) {
     return (
         <div className={cn("flex flex-col gap-4", `w-[${width}%]`)}>
             <Label htmlFor={name}>{title}</Label>
             {!textArea && (
-                <Input {...register(name)} id={name} name={name} type={type} required={required} value={value}/>
+                <Input {...register && {...register(name)}} id={name} name={name} type={type} required={required}
+                       onChange={change}
+                       value={value}/>
             )}
             {textArea && (
-                <Textarea {...register(name)} id={name} name={name} value={value}/>
+                <Textarea onChange={change} {...register && {...register(name)}} id={name} name={name} value={value}/>
             )}
         </div>
     )

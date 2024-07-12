@@ -29,7 +29,7 @@ export default function ListAnexosBaixar({list, height}: List) {
             <div className="h-full flex gap-2 absolute">
                 {list.map((anexo, i) => {
                     const extencaoFile = anexo.split(".")[anexo.split(".").length - 1].toUpperCase()
-                    const fileName = anexo.split("/")[1]
+                    const fileName = anexo.split("/")[anexo.split("/").length - 1]
                     return (
                         <a key={i}
                            onClick={async () => {

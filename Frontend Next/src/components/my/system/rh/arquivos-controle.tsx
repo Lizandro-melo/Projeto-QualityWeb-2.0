@@ -46,6 +46,7 @@ function ArquivosReferents() {
     const {colaborador} = colaboradorSelectGlobal<colaboradorSelectGlobalProps>((state: any) => state);
     const {host, configToken} = useContext(AuthContext);
     const [filter, setFilter] = useState<filterProps>({apelido: "", tipo: ""});
+    const displayLounding = stateLoundingGlobal((state: any) => state);
     const {data: docs, refetch: refetchDocs} = useQuery<DocRhModels[]>({
         queryKey: ["docsRh"],
         queryFn: async () => {
@@ -231,9 +232,16 @@ function ArquivosReferents() {
                                                 <>
                                                     <TableRow key={doc.id}
                                                               className="hover:bg-stone-400 cursor-pointer"
-                                                              title="Baixar" onClick={() => {
-                                                        Router.push(`${host}/rh/find/download/arquivo?name=${fileName}`, "", {
-                                                            scroll: true
+                                                              title="Baixar" onClick={async () => {
+                                                        displayLounding.setDisplayLounding();
+                                                        await axios.get(`${host}/suporte/find/download/arquivo?name=${fileName}`, configToken).then(() => {
+                                                            displayLounding.setDisplaySuccess("Baixado");
+                                                            location.href = `${host}/suporte/find/download/arquivo?name=${fileName}`
+                                                            displayLounding.setDisplayReset();
+                                                        }).catch(async () => {
+                                                            displayLounding.setDisplayFailure("Este documento já não existe mais!");
+                                                            await new Promise((resolve) => setTimeout(resolve, 2000));
+                                                            displayLounding.setDisplayReset();
                                                         })
                                                     }}>
                                                         <TableCell>{doc.apelido}</TableCell>
