@@ -11,11 +11,13 @@ export default function App({Component, pageProps}: AppProps) {
     const queryClient = new QueryClient()
     return (
         <QueryClientProvider client={queryClient}>
+
             <AuthProvider>
-                <DialogAlertGlobal />
+                <DialogAlertGlobal/>
                 <LoudingDisplay/>
                 <Component {...pageProps} />
             </AuthProvider>
+
         </QueryClientProvider>
     );
 }

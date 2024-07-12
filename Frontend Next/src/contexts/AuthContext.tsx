@@ -37,9 +37,7 @@ export function AuthProvider({children}: { children: ReactNode }) {
     const isAuthenticated = !!user
     const displayLounding = stateLoundingGlobal((state: any) => state)
     const searchParams = useSearchParams()
-    const [configToken, setConfigToken] = useState({
-        headers: {}
-    })
+    const [configToken, setConfigToken] = useState<any>()
 
     useEffect(() => {
         const {'quality-token': token} = parseCookies()
@@ -77,6 +75,11 @@ export function AuthProvider({children}: { children: ReactNode }) {
             password: dadosLogin.password
         }).then(async (response) => {
             const {data}: { data: ResponseSingIn } = response
+            setConfigToken({
+                headers: {
+                    'Authorization': `Bearer ${data.token}`
+                }
+            })
             displayLounding.setDisplaySuccess("Logado com sucesso!")
             setCookie(undefined, "quality-token", data.token, {
                 maxAge: 60 * 60 * 24, // 1 dia

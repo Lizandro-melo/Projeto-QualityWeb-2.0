@@ -14,7 +14,7 @@ import {
 import {Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {Input} from "@/components/ui/input";
 import ContainerSystem from "@/components/my/essential/container-system";
-import {ChangeEvent, useContext, useEffect, useState} from "react";
+import {ChangeEvent, useContext, useEffect, useRef, useState} from "react";
 import {useQuery, useQueryClient} from "react-query";
 import axios from "axios";
 import {AuthContext} from "@/contexts/AuthContext";
@@ -27,6 +27,10 @@ import {
 import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {LabelInputPadrao} from "@/components/my/essential/label-input-padrao";
 import {useForm} from "react-hook-form";
+import JoditEditor from "jodit-react";
+import {INSERT_AS_HTML} from "jodit/types/core/constants";
+import {Button} from "@/components/ui/button";
+
 
 type filtroProps = {
     anotacao: string
@@ -36,6 +40,8 @@ type filtroProps = {
     dataFim: string
     idColaborador: string
 }
+
+
 const dataObj = new Date()
 export default function Anotacoes() {
     const queryClient = useQueryClient();
@@ -254,8 +260,8 @@ export default function Anotacoes() {
                                                 <TableRow
                                                     key={anotacao.id}
                                                     onClick={() => {
-                                                        state.alterState()
                                                         setAnotacao(anotacao)
+                                                        state.alterState()
                                                     }}
                                                     className={"hover:bg-stone-200 cursor-pointer"}>
                                                     <TableCell className="max-w-[200px] overflow-hidden text-ellipsis">
@@ -312,6 +318,20 @@ export function ModalAnotacaoView() {
     const {anotacao} = anotacaoSelectGlobal<AnotacaoSelectGlobalProps>((state: any) => state);
     const {register, handleSubmit} = useForm()
 
+    const config = {
+        readonly: false,
+        height: 350,
+    };
+
+    const sendAnotacao = (data: any) => {
+        console.log()
+    }
+
+    const handleUpdate = (event: any) => {
+        const editorContent = event.target?.value;
+        console.log(editorContent)
+    };
+
     return (
         <>
             <Dialog open={state.stateModal} onOpenChange={state.alterState}>
@@ -319,10 +339,17 @@ export function ModalAnotacaoView() {
                     <DialogHeader>
                         <DialogTitle>Anotação {anotacao?.id}#</DialogTitle>
                         <DialogDescription>Aqui você irá conseguir visualizar e editar a anotação!</DialogDescription>
-                        <div className="border rounded-xl p-5 w-full h-full">
-                            <LabelInputPadrao.Root textArea title={"Ocorrencia"} name={"anotacao"} width={100} required
-                                                   register={register} value={anotacao?.anotacao}/>
-                        </div>
+                        <form className="border rounded-xl p-5 w-full h-full" onSubmit={handleSubmit(sendAnotacao)}>
+                            <JoditEditor
+                                {...register("anotacao")}
+                                value={anotacao?.anotacao!}
+                                config={config}
+                                onBlur={handleUpdate}
+                                onChange={(newContent) => {
+                                }}
+                            />
+                            <Button>Teste</Button>
+                        </form>
                     </DialogHeader>
                 </DialogContent>
             </Dialog>
