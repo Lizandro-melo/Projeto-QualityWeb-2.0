@@ -59,11 +59,11 @@ export function AuthProvider({children}: { children: ReactNode }) {
                 setAcessos(data.acessos)
             }).catch(() => {
                 disconnect()
-                Router.push("/")
+
             })
         } else {
             disconnect()
-            Router.push("/")
+
         }
     }, [])
 

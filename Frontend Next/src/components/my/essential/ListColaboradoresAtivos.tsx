@@ -35,7 +35,6 @@ export default function ListColaboradoresAtivos({tipoSelect}: ListColaboradoresA
 
     const fetchColaboradores = async (): Promise<InfoColaborador[]> => {
         try {
-            console.log(configToken)
             const response = await axios.get(
                 `${host}/colaborador/find/colaboradores?nome=${filtro?.nome}&tipo=${filtro?.tipo}`,
                 configToken
