@@ -3,7 +3,9 @@ package br.com.grupoqualityambiental.backend.controller.colaborador;
 import br.com.grupoqualityambiental.backend.dto.colaborador.InfoColaboradorCompletoDTO;
 import br.com.grupoqualityambiental.backend.enumerated.colaborador.TipoColaboradorEnum;
 import br.com.grupoqualityambiental.backend.models.acesso.AcessoModel;
+import br.com.grupoqualityambiental.backend.models.colaborador.EmpresaColaboradorModel;
 import br.com.grupoqualityambiental.backend.models.colaborador.InfoColaboradorModel;
+import br.com.grupoqualityambiental.backend.models.colaborador.SetorColaboradorModel;
 import br.com.grupoqualityambiental.backend.service.colaborador.FindColaboradorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,4 +43,17 @@ public class FindColaboradorController {
         return findColaboradorService.GetAcessoById(id);
     }
 
+    @GetMapping(
+            path = "/empresas"
+    )
+    public List<EmpresaColaboradorModel> getEmpresas() {
+        return findColaboradorService.getEmpresas();
+    }
+
+    @GetMapping(
+            path = "/setores"
+    )
+    public List<SetorColaboradorModel> getSetores() {
+        return findColaboradorService.getSetor();
+    }
 }

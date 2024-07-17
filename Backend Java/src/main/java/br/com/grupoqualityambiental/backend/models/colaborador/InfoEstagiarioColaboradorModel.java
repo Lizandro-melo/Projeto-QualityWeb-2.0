@@ -1,6 +1,7 @@
 package br.com.grupoqualityambiental.backend.models.colaborador;
 
 
+import br.com.grupoqualityambiental.backend.dto.auth.RegisterDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,5 +29,13 @@ public class InfoEstagiarioColaboradorModel {
     @OneToOne
     private SetorColaboradorModel setor;
     private Boolean status;
+
+    public InfoEstagiarioColaboradorModel(RegisterDTO register, int i) {
+        this.id = i;
+        setor = register.setor();
+        empresa = register.empresa();
+        dataAdmissao = register.dataAdmissao();
+        status = true;
+    }
 }
 

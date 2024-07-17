@@ -35,7 +35,7 @@ public class FindRhController {
 
     @GetMapping("download/arquivo")
     public ResponseEntity<InputStreamResource> downloadFile(@RequestParam("name") String name) throws IOException {
-        String directory = "C:/Users/paralamas/Desktop/Projeto QualityWeb 2.0/Frontend Next/public/assets/rh/doc/";
+        String directory = "C:/Users/paralamas/Desktop/Projeto QualityWeb 2.0/Frontend Next/public";
         File file = new File(directory + name);
 
         if (!file.exists()) {

@@ -226,3 +226,10 @@ export const stateModalAnotacaoGlobal = create<stateModalProps>((set) => ({
         stateModal: !state.stateModal,
     }))
 }))
+
+export const stateModalAnotacaoCriarGlobal = create<stateModalProps>((set) => ({
+    stateModal: false,
+    alterState: () => set((state) => ({
+        stateModal: !state.stateModal,
+    }))
+}))

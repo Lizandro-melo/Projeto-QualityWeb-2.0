@@ -40,6 +40,12 @@ export default function Rh() {
                                          selectPage.setPage("Cadastro")
                                      }}
                                      testeRole={acessos?.rolesRH.delegado}/>
+                        <NavBar.Item icon={<UserSearch className="w-[20px]"/>} title={"Lista de colaboradores"}
+                                     action={() => {
+                                         Router.push("/rh")
+                                         selectPage.setPage("listaColaboradores")
+                                     }}
+                                     testeRole={acessos?.rolesRH.delegado}/>
                     </NavBar.Section>
                     <NavBar.ButtonBack/>
                 </NavBar.Root>

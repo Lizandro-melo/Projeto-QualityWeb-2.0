@@ -5,7 +5,7 @@ import {
     colaboradorSelectGlobal,
     colaboradorSelectGlobalProps,
     stateLoundingGlobal,
-    stateLoundingGlobalProps,
+    stateLoundingGlobalProps, stateModalAnotacaoCriarGlobal,
     stateModalAnotacaoGlobal,
     stateModalProps
 } from "@/lib/globalStates";
@@ -29,9 +29,11 @@ import {useForm} from "react-hook-form";
 import {Button} from "@/components/ui/button";
 import {Label} from "@/components/ui/label";
 import {Textarea} from "@/components/ui/textarea";
-import {RotateCw} from "lucide-react";
+import {FileArchive, FileText, Image, Plus, RotateCw, Sheet} from "lucide-react";
 import ListAnexos from "@/components/my/essential/list-anexos";
 import ListAnexosBaixar from "@/components/my/essential/list-anexos-baixar";
+import Router from "next/router";
+import {ScrollArea} from "@/components/ui/scroll-area";
 
 
 type filtroProps = {
@@ -59,11 +61,15 @@ export default function Anotacoes() {
         idColaborador: ""
     })
     const state = stateModalAnotacaoGlobal<stateModalProps>(state => state)
+    const stateModalCriar = stateModalAnotacaoCriarGlobal<stateModalProps>(state => state)
+    const [stateDados, setStateDados] = useState(true);
 
 
     const fetchAnotacoes = async (): Promise<ResponseFindAnotacaoRhDTO | undefined> => {
         try {
-
+            if (!filtro.idColaborador) {
+                return
+            }
             const response = await axios.get(`${host}/rh/find/anotacao/filter?anotacao=${filtro.anotacao}&id=${filtro.idColaborador}&tipo=${filtro.tipo}&status=${filtro.status}&dataInicio=${filtro.dataInicio}&dataFim=${filtro.dataFim}`, configToken).then((response) => {
                 const anotacoes: ResponseFindAnotacaoRhDTO = response.data
                 return anotacoes
@@ -108,6 +114,7 @@ export default function Anotacoes() {
     return (
         <>
             <ModalAnotacaoView refreshNotas={refetch}/>
+            <ModalAnotacaoCriar refreshNotas={refetch}/>
             <ListColaboradoresAtivos tipoSelect/>
             <ContainerSystem>
                 <>
@@ -189,12 +196,17 @@ export default function Anotacoes() {
                             )}
                         </div>
                     </div>
-                    <div className="w-full h-full relative overflow-y-auto">
+                    <div className="w-full h-full relative overflow-y-auto overflow-x-hidden">
                         <div className="absolute w-full">
                             <Table className="relative">
                                 <TableCaption>...</TableCaption>
                                 <TableHeader>
                                     <TableRow>
+                                        <TableHead className="hover:bg-slate-100 sticky top-1">
+                            <span className="flex gap-2 relative items-center justify-between">
+                                   ID
+                        </span>
+                                        </TableHead>
                                         <TableHead className="hover:bg-slate-100 sticky top-1">
                             <span className="flex gap-2 relative items-center justify-between">
                                     <Input onChange={alterFiltro}
@@ -222,6 +234,12 @@ export default function Anotacoes() {
                                         </TableHead>
                                         <TableHead className=" hover:bg-slate-100">
                         <span className=" flex gap-2 relative items-center justify-between">
+                            Motivo
+
+                                        </span>
+                                        </TableHead>
+                                        <TableHead className=" hover:bg-slate-100">
+                        <span className=" flex gap-2 relative items-center justify-between">
                             <select
                                 className=" flex h-10 w-full rounded-md border text-center !border-stone-600 border-Input px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 border-none bg-transparent focus-visible:!ring-0"
                                 name="status" onChange={alterFiltro} value={filtro.status ? "true" : "false"}>
@@ -231,6 +249,7 @@ export default function Anotacoes() {
 
                                         </span>
                                         </TableHead>
+
 
                                         <TableHead className="hover:bg-slate-100">
                                                 <span className="flex gap-2 relative items-center justify-center">
@@ -265,6 +284,12 @@ export default function Anotacoes() {
                                                 <TableCell className="max-w-[200px] overflow-hidden text-ellipsis">
                                                             <span
                                                                 className=" whitespace-nowrap ">
+                                                            {anotacao.id}
+                                                            </span>
+                                                </TableCell>
+                                                <TableCell className="max-w-[200px] overflow-hidden text-ellipsis">
+                                                            <span
+                                                                className=" whitespace-nowrap ">
                                                             {anotacao.anotacao}
                                                             </span>
                                                 </TableCell>
@@ -272,6 +297,12 @@ export default function Anotacoes() {
                                                             <span
                                                                 className="text-center flex items-center justify-center">
                                                             {anotacao.tipoAnotacao}
+                                                            </span>
+                                                </TableCell>
+                                                <TableCell>
+                                                            <span
+                                                                className="text-center flex items-center justify-center">
+                                                            {anotacao.motivo}
                                                             </span>
                                                 </TableCell>
                                                 <TableCell>
@@ -301,10 +332,98 @@ export default function Anotacoes() {
                                 </TableBody>
                             </Table>
                         </div>
+                        {colaborador?.fkAuth && (
+                            <Button onClick={() => stateModalCriar.alterState()} type="button"
+                                    className="absolute bottom-5 opacity-80 flex gap-3 group">
+                                <Plus/>
+                                <span className="group-hover:block hidden">Nova anotação</span>
+                            </Button>
+                        )}
+                        {responseAnotacao?.dadosContabilizados && (
+                            <div
+                                className={cn("flex items-end absolute -right-[250px] bottom-5 transition-all opacity-70", stateDados && "!right-0 opacity-100")}>
+                                <Button className="relative bottom-0 rounded-l-full" type="button"
+                                        onClick={() => setStateDados(!stateDados)}>
+
+                                    {stateDados ? (
+                                        <>
+                                            Esconder os dados
+                                        </>
+                                    ) : (
+                                        <>
+                                            Visualizar os dados
+                                        </>
+                                    )}
+                                </Button>
+                                <div
+                                    className={cn(" shadow-2xl rounded-lg bg-stone-200 border w-[250px] ")}>
+
+                                    <ul className="text-sm p-3 flex flex-col gap-1">
+                                        <li className="flex justify-between">
+                                            <span>Advertencia escrita</span>
+                                            <span>{responseAnotacao?.dadosContabilizados.advEscrita!}</span>
+                                        </li>
+                                        <hr className="border border-b-stone-400"/>
+                                        <li className="flex justify-between">
+                                            <span>Advertencia verbal</span>
+                                            <span>{responseAnotacao?.dadosContabilizados.advVerbal!}</span>
+                                        </li>
+                                        <hr className="border border-b-stone-400"/>
+                                        <li className="flex justify-between">
+                                            <span>Atestado de horas</span>
+                                            <span>{responseAnotacao?.dadosContabilizados.atestadoHora!}</span>
+                                        </li>
+                                        <hr className="border border-b-stone-400"/>
+                                        <li className="flex justify-between">
+                                            <span>Atestado de dias</span>
+                                            <span>{responseAnotacao?.dadosContabilizados.atestado!}</span>
+                                        </li>
+                                        <hr className="border border-b-stone-400"/>
+                                        <li className="flex justify-between">
+                                            <span>Licença</span>
+                                            <span>{responseAnotacao?.dadosContabilizados.licenca!}</span>
+                                        </li>
+                                        <hr className="border border-b-stone-400"/>
+                                        <li className="flex justify-between">
+                                            <span>Ferias</span>
+                                            <span>{responseAnotacao?.dadosContabilizados.ferias!}</span>
+                                        </li>
+                                        <hr className="border border-b-stone-400"/>
+                                        <li className="flex justify-between">
+                                            <span>Quantidade de faltas</span>
+                                            <span>{responseAnotacao?.dadosContabilizados.faltou!}</span>
+                                        </li>
+                                        <hr className="border border-b-stone-400"/>
+                                        <li className="flex justify-between">
+                                            <span>Quantidade de atrasos</span>
+                                            <span>{responseAnotacao?.dadosContabilizados.atrasos!}</span>
+                                        </li>
+                                        <hr className="border border-b-stone-400"/>
+                                        <li className="flex justify-between">
+                                            <span>Quantidade de suspensão</span>
+                                            <span>{responseAnotacao?.dadosContabilizados.suspensao!}</span>
+                                        </li>
+                                        <hr className="border border-b-stone-400"/>
+                                        <li className="flex justify-between">
+                                            <span>Tempo de atraso</span>
+                                            <span>{responseAnotacao?.dadosContabilizados.atrasoTempo!} min</span>
+                                        </li>
+                                        <hr className="border border-b-stone-400"/>
+                                        <li className="flex justify-between">
+                                            <span>Banco de horas</span>
+                                            <span>{responseAnotacao?.dadosContabilizados.bancoHoras!} min</span>
+                                        </li>
+                                        <hr className="border border-b-stone-400"/>
+                                        <li className="flex justify-between">
+                                            <span>Horas extras</span>
+                                            <span>{responseAnotacao?.dadosContabilizados.horasExtras!} min</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </>
-
-
             </ContainerSystem>
         </>
     )
@@ -341,9 +460,17 @@ export function ModalAnotacaoView({refreshNotas}: { refreshNotas: any }) {
                 return;
             }
         }
+
         const anotacaoRequest: AnotacaoRhModels = {
             ...anotacao!,
-            anexo: updatedAnexos.length === 0 ? null : JSON.stringify(updatedAnexos),
+            anexo: updatedAnexos.length === 0 ? anotacao?.anexo! : JSON.stringify(updatedAnexos),
+        }
+        if (JSON.stringify(anotacaoSelect.anotacao) === JSON.stringify(anotacaoRequest)) {
+            displayLounding.setDisplayFailure("Não houve nenhuma alteração!")
+            await new Promise(resolve => setTimeout(resolve, 1500))
+            displayLounding.setDisplayReset()
+            setModo(false)
+            return
         }
         await new Promise(resolve => setTimeout(resolve, 500))
         await axios.put(`${host}/rh/update/anotacao/atualizar`, anotacaoRequest, configToken).then(async (response) => {
@@ -861,7 +988,7 @@ export function ModalAnotacaoView({refreshNotas}: { refreshNotas: any }) {
                                             </li>
                                         </ul>
                                         {(anotacao?.anexo && anotacao?.anexo!.length > 0) && (
-                                            <ListAnexosBaixar list={JSON.parse(anotacao.anexo!)}/>
+                                            <AnexoBaixarAnotacao anexos={JSON.parse(anotacao.anexo!)}/>
                                         )}
                                     </div>
                                 </div>
@@ -886,5 +1013,425 @@ export function ModalAnotacaoView({refreshNotas}: { refreshNotas: any }) {
                 </DialogContent>
             </Dialog>
         </>
+    )
+}
+
+export function ModalAnotacaoCriar({refreshNotas}: { refreshNotas: any }) {
+
+    const queryClient = useQueryClient();
+    const stateModalCriar = stateModalAnotacaoCriarGlobal<stateModalProps>(state => state)
+    const {colaborador} = colaboradorSelectGlobal<colaboradorSelectGlobalProps>((state: any) => state);
+    const anotacaoSelect = anotacaoSelectGlobal<AnotacaoSelectGlobalProps>((state: any) => state);
+    const {register, handleSubmit} = useForm()
+    const [anotacao, setAnotacao] = useState<AnotacaoRhModels>()
+    const [modo, setModo] = useState(false)
+    const [anexoListItens, setAnexoListItens] = useState<File[]>([]);
+
+    const {host, configToken} = useContext(AuthContext)
+    const displayLounding = stateLoundingGlobal<stateLoundingGlobalProps>((state: any) => state)
+
+    useEffect(() => {
+        setAnotacao(anotacaoSelect.anotacao!)
+    }, [anotacaoSelect.anotacao]);
+
+    const sendAnotacaoEditada = async () => {
+        displayLounding.setDisplayLounding()
+        let updatedAnexos: string[] = [];
+        if (anexoListItens.length !== 0) {
+            try {
+                updatedAnexos = await updateFile();
+            } catch {
+                displayLounding.setDisplayFailure("Falha na tentativa de enviar os documentos. Tente novamente!");
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+                displayLounding.setDisplayReset();
+                return;
+            }
+        }
+
+        const anotacaoRequest: AnotacaoRhModels = {
+            ...anotacao!,
+            anexo: updatedAnexos.length === 0 ? anotacao?.anexo! : JSON.stringify(updatedAnexos),
+        }
+        if (JSON.stringify(anotacaoSelect.anotacao) === JSON.stringify(anotacaoRequest)) {
+            displayLounding.setDisplayFailure("Não houve nenhuma alteração!")
+            await new Promise(resolve => setTimeout(resolve, 1500))
+            displayLounding.setDisplayReset()
+            setModo(false)
+            return
+        }
+        await new Promise(resolve => setTimeout(resolve, 500))
+        await axios.put(`${host}/rh/update/anotacao/atualizar`, anotacaoRequest, configToken).then(async (response) => {
+            displayLounding.setDisplaySuccess(response.data)
+            await new Promise(resolve => setTimeout(resolve, 1500))
+            displayLounding.setDisplayReset()
+            setModo(false)
+            stateModalCriar.alterState()
+            refreshNotas()
+            setAnexoListItens([])
+        }).catch(async (error) => {
+            displayLounding.setDisplayFailure("Não foi possivel atualizar a anotação")
+            await new Promise(resolve => setTimeout(resolve, 1500))
+            displayLounding.setDisplayReset()
+        })
+    };
+
+    const inativarNota = async () => {
+        displayLounding.setDisplayLounding()
+        await new Promise(resolve => setTimeout(resolve, 500))
+        await axios.delete(`${host}/rh/update/anotacao/inativar?id=${anotacao?.id}`, configToken).then(async (response) => {
+            displayLounding.setDisplaySuccess(response.data)
+            await new Promise(resolve => setTimeout(resolve, 1500))
+            displayLounding.setDisplayReset()
+            setModo(false)
+            stateModalCriar.alterState()
+            refreshNotas()
+        }).catch(async (error) => {
+            displayLounding.setDisplayFailure("Não foi possivel inativar a anotação")
+            await new Promise(resolve => setTimeout(resolve, 1500))
+            displayLounding.setDisplayReset()
+        })
+    }
+
+    const reativarNota = async () => {
+        displayLounding.setDisplayLounding()
+        await new Promise(resolve => setTimeout(resolve, 500))
+        await axios.get(`${host}/rh/update/anotacao/reativar?id=${anotacao?.id}`, configToken).then(async (response) => {
+            displayLounding.setDisplaySuccess(response.data)
+            await new Promise(resolve => setTimeout(resolve, 1500))
+            displayLounding.setDisplayReset()
+            setModo(false)
+            stateModalCriar.alterState()
+            refreshNotas()
+        }).catch(async (error) => {
+            displayLounding.setDisplayFailure("Não foi possivel inativar a anotação")
+            await new Promise(resolve => setTimeout(resolve, 1500))
+            displayLounding.setDisplayReset()
+        })
+    }
+
+    const alterAnotacao = (e: ChangeEvent<any>) => {
+        const {name, value} = e.target
+        setAnotacao((prevState: any) => ({
+            ...prevState,
+            [name]: value
+        }))
+    }
+
+    const alterDados = (e: ChangeEvent<any>) => {
+        const {name, checked} = e.target
+
+        setAnotacao((prevState: any) => ({
+            ...prevState,
+            [name]: checked
+        }))
+    }
+
+    const updateFile = async () => {
+        let updatedAnexos: string[] = [];
+        for (const file of anexoListItens) {
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("dir", `C:/Users/paralamas/Desktop/Projeto QualityWeb 2.0/Frontend Next/public/assets/rh/doc/${colaborador?.nomeCompleto}`);
+
+            await axios.post(`${host}/rh/update/doc`, formData, configToken).then(async (response) => {
+                updatedAnexos.push(`/assets/rh/doc/${colaborador?.nomeCompleto}/${response.data}`)
+            }).catch(async () => {
+                throw new Error("Falha ao enviar o arquivo");
+            });
+        }
+        return updatedAnexos
+    };
+
+
+    return (
+        <>
+            <Dialog open={stateModalCriar.stateModal} onOpenChange={() => {
+                setModo(false)
+                stateModalCriar.alterState()
+            }}>
+                <DialogContent className="!max-w-[68rem] scale-[85%]">
+                    <DialogHeader>
+                        <DialogTitle>Anotação {anotacao?.id}#</DialogTitle>
+                        <form className="border rounded-xl p-3 w-full h-full relative pb-10"
+                              onSubmit={handleSubmit(sendAnotacaoEditada)}>
+                            <div className=" w-full flex flex-col gap-2">
+                                <div className={cn("flex flex-col gap-4 w-full")}>
+                                    <Label htmlFor={"anotacao"}>Ocorrencia</Label>
+                                    <Textarea className="text-xs" id={"anotacao"}
+                                              name={"anotacao"}
+                                              required
+                                              onChange={alterAnotacao}
+                                              value={anotacao?.anotacao} rows={3}/>
+                                </div>
+                            </div>
+                            <div className="flex w-full h-full py-5">
+                                <div className="text-sm w-[50%] h-full flex flex-col gap-2">
+                                    <Label>Dados:</Label>
+                                    <ul className="flex gap-2 flex-col py-2">
+                                        <li className="flex gap-3 items-center">
+                                            <input type="checkbox" className="checked:w-4 checked:h-4 w-4 h-4"
+                                                   onChange={alterDados}
+                                                   id="atestado"
+                                                   name="atestado"
+                                                   checked={anotacao?.atestado}/>
+                                            <Label
+                                                className="text-xs"
+                                                htmlFor="atestado"
+                                            >
+                                                Atestado de dias
+                                            </Label>
+                                        </li>
+                                        <li className="flex gap-3 items-center">
+                                            <input type="checkbox" className="checked:w-4 checked:h-4 w-4 h-4"
+                                                   onChange={alterDados}
+                                                   id="atestadoHora"
+                                                   name="atestadoHora"
+
+                                                   checked={anotacao?.atestadoHora}/>
+                                            <Label
+                                                className="text-xs"
+                                                htmlFor="atestadoHora"
+                                            >
+                                                Atestado de horas
+                                            </Label>
+                                        </li>
+                                        <li className="flex gap-3 items-center">
+                                            <input type="checkbox" className="checked:w-4 checked:h-4 w-4 h-4"
+                                                   id="ferias"
+                                                   onChange={alterDados}
+                                                   name="ferias"
+
+                                                   checked={anotacao?.ferias}/>
+                                            <Label
+                                                className="text-xs"
+                                                htmlFor="ferias"
+                                            >
+                                                Ferias
+                                            </Label>
+                                        </li>
+                                        <li className="flex gap-3 items-center">
+                                            <input type="checkbox" className="checked:w-4 checked:h-4 w-4 h-4"
+                                                   id="suspensao"
+                                                   name="suspensao"
+                                                   onChange={alterDados}
+
+                                                   checked={anotacao?.suspensao}/>
+                                            <Label
+                                                className="text-xs"
+                                                htmlFor="suspensao"
+                                            >
+                                                Suspensão
+                                            </Label>
+                                        </li>
+                                        <li className="flex gap-3 items-center">
+                                            <input type="checkbox" className="checked:w-4 checked:h-4 w-4 h-4"
+                                                   id="licenca"
+                                                   onChange={alterDados}
+                                                   name="licenca"
+
+                                                   checked={anotacao?.licenca}/>
+                                            <Label
+                                                className="text-xs"
+                                                htmlFor="licenca"
+                                            >
+                                                Licença
+                                            </Label>
+                                        </li>
+                                        <li className="flex gap-3 items-center">
+                                            <input type="checkbox" className="checked:w-4 checked:h-4 w-4 h-4"
+                                                   id="advVerbal"
+                                                   onChange={alterDados}
+                                                   name="advVerbal"
+                                                   checked={anotacao?.advVerbal}/>
+                                            <Label
+                                                className="text-xs"
+                                                htmlFor="advVerbal"
+                                            >
+                                                Advertência verbal
+                                            </Label>
+
+                                        </li>
+                                        <li className="flex gap-3 items-center">
+                                            <input type="checkbox" className="checked:w-4 checked:h-4 w-4 h-4"
+                                                   id="advEscrita"
+                                                   onChange={alterDados}
+                                                   name="advEscrita"
+                                                   checked={anotacao?.advEscrita}/>
+                                            <Label
+                                                className="text-xs"
+                                                htmlFor="advEscrita"
+                                            >
+                                                Advertência escrita
+                                            </Label>
+                                        </li>
+                                        <li className="flex gap-3 items-center">
+                                            <input type="checkbox" className="checked:w-4 checked:h-4 w-4 h-4"
+                                                   id="atraso"
+                                                   name="atraso"
+                                                   onChange={alterDados}
+                                                   checked={anotacao?.atraso}/>
+                                            <Label
+                                                className="text-xs"
+                                                htmlFor="atraso"
+                                            >
+                                                Atraso
+                                            </Label>
+                                        </li>
+                                        <li className="flex gap-2 flex-col">
+                                            <div className={cn("flex flex-col gap-4 w-full")}>
+                                                <Label htmlFor={"anotacao"}>Motivo</Label>
+                                                <select
+                                                    value={anotacao?.motivo}
+                                                    required
+                                                    name="motivo"
+                                                    onChange={alterAnotacao}
+                                                    className="flex h-9 w-[50%] rounded-md border !border-stone-600 border-Input bg-background px-3 py-2 text-xs ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50">
+                                                    <option value="">Registre um motivo</option>
+                                                    <option value="Atestado dias">Atestado dias</option>
+                                                    <option value="Atestado horas">Atestado horas</option>
+                                                    <option value="Ferias">Ferias</option>
+                                                    <option value="Suspensão">Suspensão</option>
+                                                    <option value="Licença">Licença</option>
+                                                    <option value="Advertência verbal">Advertência verbal</option>
+                                                    <option value="Advertência escrita">Advertência escrita</option>
+                                                    <option value="Atraso">Atraso</option>
+                                                </select>
+                                            </div>
+                                        </li>
+                                        {anotacao?.atraso && (
+                                            <li className="flex gap-2 flex-col">
+                                                <LabelInputPadrao.Root name="atrasoTempo" title={"Tempo de atraso"}
+                                                                       change={alterAnotacao} width={50}
+                                                                       type="number"
+                                                                       required
+                                                                       value={anotacao?.atrasoTempo!.toString()}/>
+                                            </li>
+                                        )}
+                                    </ul>
+                                </div>
+                                <div className="text-sm w-[50%] h-full flex flex-col gap-2">
+                                    <ul className="flex gap-2 flex-col py-2">
+
+                                        <li className="flex gap-2 flex-col">
+                                            <LabelInputPadrao.Root name="horaExtra" title={"Hora extra"}
+                                                                   change={alterAnotacao} width={100}
+                                                                   type="number"
+                                                                   required
+                                                                   value={anotacao?.horaExtra!.toString()}/>
+                                        </li>
+
+                                        <li className="flex gap-2 flex-col">
+                                            <LabelInputPadrao.Root name="bancoPositivo" title={"Banco positivo"}
+                                                                   change={alterAnotacao} width={100}
+                                                                   type="number"
+                                                                   required
+                                                                   value={anotacao?.bancoPositivo!.toString()}/>
+                                        </li>
+
+                                        <li className="flex gap-2 flex-col">
+                                            <LabelInputPadrao.Root name="bancoNegativo" title={"Banco negativo"}
+                                                                   change={alterAnotacao} width={100}
+                                                                   type="number"
+                                                                   value={anotacao?.bancoNegativo!.toString()}/>
+                                        </li>
+
+
+                                        <li className="flex gap-2">
+                                            <LabelInputPadrao.Root name="dataInicio" title={"Data de inicio"}
+                                                                   change={alterAnotacao} width={50}
+                                                                   type="date"
+                                                                   value={anotacao?.dataInicio}/>
+                                            <LabelInputPadrao.Root name="dataFinal" title={"Data de final"}
+                                                                   change={alterAnotacao} width={50}
+                                                                   type="date"
+                                                                   value={anotacao?.dataFinal}/>
+                                        </li>
+                                        {anotacao?.advEscrita && (
+                                            <li className="flex gap-2 flex-col">
+                                                <LabelInputPadrao.Root name="advEscritaData"
+                                                                       title={"Data da adv escrita"}
+                                                                       change={alterAnotacao} width={100}
+                                                                       type="date"
+                                                                       value={anotacao?.advEscritaData}/>
+                                            </li>
+                                        )}
+
+                                    </ul>
+                                    {(anotacao?.atestado || anotacao?.atestadoHora || anotacao?.advEscrita || anotacao?.licenca) && (
+                                        <ListAnexos list={anexoListItens} alterList={setAnexoListItens}/>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="absolute bottom-2">
+                                <Button variant="destructive">
+                                    Enviar edição
+                                </Button>
+                                <Button variant="link" onClick={() => {
+                                    if (JSON.stringify(anotacaoSelect.anotacao) !== JSON.stringify(anotacao)) {
+                                        setAnotacao(anotacaoSelect.anotacao!)
+                                    }
+                                    setModo(false)
+                                }}>
+                                    Cancelar edição
+                                </Button>
+                            </div>
+                        </form>
+                    </DialogHeader>
+                </DialogContent>
+            </Dialog>
+        </>
+    )
+}
+
+export function AnexoBaixarAnotacao({anexos}: { anexos: string[] }) {
+
+    const {host, configToken} = useContext(AuthContext)
+    const displayLounding = stateLoundingGlobal((state: any) => state);
+
+    return (
+        <div
+            className={cn("border h-[80px] w-full rounded-sm border-stone-500 p-2 overflow-x-auto overflow-y-hidden relative")}>
+            <div className="h-full flex gap-2 absolute">
+                {anexos.map((anexo, i) => {
+                    const extencaoFile = anexo.split(".")[anexo.split(".").length - 1].toUpperCase()
+                    const fileName = anexo.split("/")[anexo.split("/").length - 1]
+                    return (
+                        <a key={i}
+                           onClick={async () => {
+                               displayLounding.setDisplayLounding();
+                               await axios.get(`${host}/rh/find/download/arquivo?name=${anexo}`).then(() => {
+                                   displayLounding.setDisplaySuccess("Baixado");
+                                   Router.push(`${host}/rh/find/download/arquivo?name=${anexo}`)
+                                   displayLounding.setDisplayReset();
+                               }).catch(async () => {
+                                   displayLounding.setDisplayFailure("Este documento já não existe mais!");
+                                   await new Promise((resolve) => setTimeout(resolve, 2000));
+                                   displayLounding.setDisplayReset();
+                               })
+                           }}
+                           title={fileName}
+                           target="_blank"
+                           className="border border-stone-500 h-[65px] w-[65px] flex flex-col items-center justify-center flex-none rounded-md cursor-pointer hover:bg-slate-100">
+                            {(extencaoFile === "CSV" || extencaoFile === "XLSX") && (
+                                <Sheet className="w-4"/>
+                            )}
+                            {(extencaoFile === "PNG" || extencaoFile === "JPEG" || extencaoFile === "JPG") && (
+                                <Image className="w-4"/>
+                            )}
+                            {(extencaoFile === "TXT" || extencaoFile === "DOCX") && (
+                                <FileText className="w-4"/>
+                            )}
+                            {(extencaoFile === "ZIP" || extencaoFile === "RAR") && (
+                                <FileArchive className="w-4"/>
+                            )}
+                            <span className="text-xs">{extencaoFile}</span>
+                        </a>
+                    )
+                })}
+
+            </div>
+
+
+        </div>
     )
 }

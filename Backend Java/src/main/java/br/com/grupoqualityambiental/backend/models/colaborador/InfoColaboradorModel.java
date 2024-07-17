@@ -1,5 +1,6 @@
 package br.com.grupoqualityambiental.backend.models.colaborador;
 
+import br.com.grupoqualityambiental.backend.dto.auth.RegisterDTO;
 import br.com.grupoqualityambiental.backend.enumerated.colaborador.TipoColaboradorEnum;
 import jakarta.persistence.*;
 import lombok.*;
@@ -42,5 +43,13 @@ public class InfoColaboradorModel {
         this.fkAuth = id;
         this.nomeCompleto = nomeCompleto;
         this.tipo = tipo;
+    }
+
+    public InfoColaboradorModel(RegisterDTO register, Long fkAuth) {
+        this.fkAuth = fkAuth;
+        nomeCompleto = register.nomeCompleto();
+        cep = register.cep();
+        dataNascimento = register.dataNascimento();
+        tipo = TipoColaboradorEnum.valueOf(register.tipo());
     }
 }

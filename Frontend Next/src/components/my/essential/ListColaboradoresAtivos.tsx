@@ -45,7 +45,7 @@ export default function ListColaboradoresAtivos({tipoSelect}: ListColaboradoresA
         }
     };
 
-    const {data: colaboradores} = useQuery({
+    const {data: colaboradores, refetch: reFetchColaboradoresAtivos} = useQuery({
         queryKey: ['colaboradoresList', filtro],
         queryFn: fetchColaboradores,
         enabled: !!filtro && !!configToken
@@ -69,7 +69,7 @@ export default function ListColaboradoresAtivos({tipoSelect}: ListColaboradoresA
     }
 
     useEffect(() => {
-        queryClient.fetchQuery(['colaboradoresList', filtro], fetchColaboradores);
+        reFetchColaboradoresAtivos()
     }, [filtro, queryClient]);
 
 

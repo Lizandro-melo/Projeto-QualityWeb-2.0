@@ -1,7 +1,7 @@
 import ListColaboradoresAtivos from "@/components/my/essential/ListColaboradoresAtivos";
 import React, {ChangeEvent, useCallback, useContext, useEffect, useRef, useState} from "react";
 import {Avatar, AvatarImage} from "@/components/ui/avatar";
-import {FileText, Image, Plus, RotateCcw, RotateCw, Sheet} from "lucide-react";
+import {FileText, Image, Plus, RotateCcw, RotateCw, Sheet, Trash} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {ScrollArea} from "@/components/ui/scroll-area";
@@ -9,11 +9,11 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/c
 import {Input} from "@/components/ui/input";
 import {
     colaboradorSelectGlobal,
-    colaboradorSelectGlobalProps, pageSelectProps,
+    colaboradorSelectGlobalProps, pageSelectProps, stateAlertDialogGlobal, stateAlertDialogGlobalProps,
     stateLoundingGlobal, stateModalDocExistenteProps, stateModalImportDocExistenteRhGlobal,
     stateModalImportDocRhGlobal, stateModalProps
 } from "@/lib/globalStates";
-import {DocRhModels, SubstituirDocRhDTO, TipoDocRhDTO} from "@/lib/models";
+import {DocExpirandoAlertRhDTO, DocRhModels, SubstituirDocRhDTO, TipoDocRhDTO} from "@/lib/models";
 import {useForm} from "react-hook-form";
 import {cn} from "@/lib/utils";
 import {Label} from "@/components/ui/label";
@@ -28,7 +28,7 @@ import ContainerSystem from "@/components/my/essential/container-system";
 export default function ArquivosControle() {
     return (
         <>
-            <ListColaboradoresAtivos/>
+            <ListColaboradoresAtivos tipoSelect/>
             <ArquivosReferents/>
         </>
     )
@@ -42,6 +42,7 @@ type filterProps = {
 
 function ArquivosReferents() {
     const queryClient = useQueryClient();
+    const stateAlert = stateAlertDialogGlobal<stateAlertDialogGlobalProps>((state) => state)
     const state = stateModalImportDocRhGlobal((state) => state);
     const {colaborador} = colaboradorSelectGlobal<colaboradorSelectGlobalProps>((state: any) => state);
     const {host, configToken} = useContext(AuthContext);
@@ -81,33 +82,33 @@ function ArquivosReferents() {
         },
         enabled: !!colaborador?.fkAuth && !!host
     });
-    const {data: docsAlert, refetch: refetchDocsAlert} = useQuery<DocRhModels[]>({
+    const {data: docsAlert, refetch: refetchDocsAlert} = useQuery<DocExpirandoAlertRhDTO[]>({
         queryKey: ["docsAlert"],
         queryFn: async () => {
             try {
-                const response = await axios.get(`${host}/rh/find/doc/alert?id=${colaborador?.fkAuth}`, configToken);
-                return response.data.doc.map((doc: DocRhModels) => {
-                    switch (doc.tipo) {
+                const response = await axios.get(`${host}/rh/find/doc/alert?id=${colaborador?.fkAuth}`, configToken).then(response => response.data);
+                return response.map((docAlert: DocExpirandoAlertRhDTO) => {
+                    switch (docAlert?.doc!.tipo) {
                         case "IDENTIDADE":
-                            doc.tipo = "Identidade";
+                            docAlert.doc.tipo = "Identidade";
                             break;
                         case "TITULOELEITOR":
-                            doc.tipo = "Título de eleitor";
+                            docAlert.doc.tipo = "Título de eleitor";
                             break;
                         case "COMPROVANTERESIDENCIA":
-                            doc.tipo = "Comprovante de residencia";
+                            docAlert.doc.tipo = "Comprovante de residencia";
                             break;
                         case "EXAMECOMPLEMENTAR":
-                            doc.tipo = "Exame Complementar";
+                            docAlert.doc.tipo = "Exame Complementar";
                             break;
                         case "DECLARACAO":
-                            doc.tipo = "Declaração";
+                            docAlert.doc.tipo = "Declaração";
                             break;
                         case "CONTRATO":
-                            doc.tipo = "Contrato";
+                            docAlert.doc.tipo = "Contrato";
                             break;
                     }
-                    return doc;
+                    return docAlert;
                 });
             } catch (error) {
                 return null;
@@ -120,8 +121,13 @@ function ArquivosReferents() {
     useEffect(() => {
         if (colaborador?.fkAuth && host) {
             refetchDocs();
+            refetchDocsAlert()
         }
-    }, [colaborador?.fkAuth]);
+        if (state.stateModal) {
+            refetchDocs();
+            refetchDocsAlert()
+        }
+    }, [colaborador?.fkAuth, state.stateModal]);
 
 
     const applyFilter = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -151,7 +157,37 @@ function ArquivosReferents() {
         }
 
 
-    }, [docs, filter.apelido, filter.tipo, queryClient, refetchDocs]);
+    }, [filter.apelido, filter.tipo, queryClient, refetchDocs]);
+
+    const deletarDoc = useCallback((doc: DocRhModels) => {
+        stateAlert.setAlert("Atenção", `Tem certeza que deseja deletar o documento ${doc.apelido}?`, async () => {
+            displayLounding.setDisplayLounding()
+            await axios.delete(`${host}/rh/update/delete/doc?id=${doc.id}`, configToken).then(async (response) => {
+                displayLounding.setDisplaySuccess(response.data);
+                await new Promise((resolve) => setTimeout(resolve, 2000));
+                refetchDocs();
+                refetchDocsAlert()
+                displayLounding.setDisplayReset();
+            }).catch(async () => {
+                displayLounding.setDisplayFailure("Não foi possivel deeltar esté documento");
+                await new Promise((resolve) => setTimeout(resolve, 2000));
+                displayLounding.setDisplayReset();
+            })
+        })
+    }, [configToken])
+
+    const baixarDoc = async (doc: DocRhModels) => {
+        displayLounding.setDisplayLounding();
+        await axios.get(`${host}/rh/find/download/arquivo?name=${doc.dir}`).then(() => {
+            displayLounding.setDisplaySuccess("Baixado");
+            Router.push(`${host}/rh/find/download/arquivo?name=${doc.dir}`)
+            displayLounding.setDisplayReset();
+        }).catch(async () => {
+            displayLounding.setDisplayFailure("Este documento já não existe mais!");
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+            displayLounding.setDisplayReset();
+        })
+    }
 
 
     // @ts-ignore
@@ -173,12 +209,6 @@ function ArquivosReferents() {
                             </div>
                             <p className="text-stone-500 text-xs">Coloque o mouse por cima do documento para
                                 pré-visualizalo</p>
-                            <Button type="button"
-                                    className="rounded-full w-[40px] h-[40px] p-[10px] hover:animate-spin-reload transition-all"
-                                    onClick={() => refetchDocs()}
-                            >
-                                <RotateCw/>
-                            </Button>
                         </div>
 
                         <ScrollArea
@@ -232,22 +262,20 @@ function ArquivosReferents() {
                                                 <>
                                                     <TableRow key={doc.id}
                                                               className="hover:bg-stone-400 cursor-pointer"
-                                                              title="Baixar" onClick={async () => {
-                                                        displayLounding.setDisplayLounding();
-                                                        await axios.get(`${host}/suporte/find/download/arquivo?name=${fileName}`, configToken).then(() => {
-                                                            displayLounding.setDisplaySuccess("Baixado");
-                                                            location.href = `${host}/suporte/find/download/arquivo?name=${fileName}`
-                                                            displayLounding.setDisplayReset();
-                                                        }).catch(async () => {
-                                                            displayLounding.setDisplayFailure("Este documento já não existe mais!");
-                                                            await new Promise((resolve) => setTimeout(resolve, 2000));
-                                                            displayLounding.setDisplayReset();
-                                                        })
-                                                    }}>
-                                                        <TableCell>{doc.apelido}</TableCell>
-                                                        <TableCell>{doc.tipo}</TableCell>
-                                                        <TableCell>{doc.dataEmissao}</TableCell>
-                                                        <TableCell>{doc.dataVencimento}</TableCell>
+                                                              title="Baixar">
+                                                        <TableCell
+                                                            onClick={() => baixarDoc(doc)}>{doc.apelido}</TableCell>
+                                                        <TableCell onClick={() => baixarDoc(doc)}>{doc.tipo}</TableCell>
+                                                        <TableCell
+                                                            onClick={() => baixarDoc(doc)}>{doc.dataEmissao}</TableCell>
+                                                        <TableCell
+                                                            onClick={() => baixarDoc(doc)}>{doc.dataVencimento}</TableCell>
+                                                        <TableCell>
+                                                            <Button onClick={() => deletarDoc(doc)}
+                                                                    className={"w-[50px] h-[30px]"} title={"Deletar"}>
+                                                                <Trash/>
+                                                            </Button>
+                                                        </TableCell>
                                                     </TableRow>
                                                 </>
                                             )
@@ -278,21 +306,30 @@ function ArquivosReferents() {
                                         </TableHead>
                                     </TableHeader>
                                     <TableBody>
-                                        {docs?.sort((a, b) => {
-                                            return a.apelido! >= b.apelido! ? 1 : -1;
-                                        }).map((doc: DocRhModels) => {
-                                            const fileName = `${doc.dir?.split("/")[4]}/${doc.dir?.split("/")[5]}`
+                                        {docsAlert?.map((doc: DocExpirandoAlertRhDTO) => {
                                             return (
                                                 <>
-                                                    <TableRow key={doc.id}
-                                                              className="hover:bg-stone-400 cursor-pointer"
-                                                              title="Baixar" onClick={() => {
-                                                        Router.push(`${host}/rh/find/download/arquivo?name=${fileName}`, "", {
-                                                            scroll: true
+                                                    <TableRow key={doc.doc?.id}
+                                                              className="bg-red-300 hover:bg-red-400 cursor-pointer"
+                                                              title="Baixar" onClick={async () => {
+                                                        displayLounding.setDisplayLounding();
+                                                        await axios.get(`${host}/rh/find/download/arquivo?name=${doc.doc?.dir}`).then(() => {
+                                                            displayLounding.setDisplaySuccess("Baixado");
+                                                            Router.push(`${host}/rh/find/download/arquivo?name=${doc.doc?.dir}`)
+                                                            displayLounding.setDisplayReset();
+                                                        }).catch(async () => {
+                                                            displayLounding.setDisplayFailure("Este documento já não existe mais!");
+                                                            await new Promise((resolve) => setTimeout(resolve, 2000));
+                                                            displayLounding.setDisplayReset();
                                                         })
                                                     }}>
-                                                        <TableCell>{doc.apelido}</TableCell>
-                                                        <TableCell>{doc.tipo}</TableCell>
+                                                        <TableCell>{doc.doc?.apelido}</TableCell>
+                                                        <TableCell>{doc.doc?.tipo}</TableCell>
+                                                        {doc.diasRestantes <= 0 ? (
+                                                            <TableCell>Vencido</TableCell>
+                                                        ) : (
+                                                            <TableCell>{doc.diasRestantes} Dias</TableCell>
+                                                        )}
                                                     </TableRow>
                                                 </>
                                             )
@@ -305,7 +342,11 @@ function ArquivosReferents() {
 
                 </>
             )}
-
+            {!colaborador && (
+                <ContainerSystem>
+                    Documentos
+                </ContainerSystem>
+            )}
         </>
     )
 }
@@ -356,6 +397,12 @@ function ModalImportDocument() {
             dir: doc?.dir,
             referentColaborador: colaboradorSelect.colaborador?.fkAuth!
         }
+        if (doc?.dir === null) {
+            displayLounding.setDisplayFailure("Importe um documento!")
+            await new Promise((resolve) => setTimeout(resolve, 1500));
+            displayLounding.setDisplayReset()
+            return
+        }
         await axios.post(`${host}/rh/create/doc`, document, configToken).then(async (response) => {
             displayLounding.setDisplaySuccess(response.data)
             await new Promise((resolve) => setTimeout(resolve, 1500));
@@ -367,10 +414,11 @@ function ModalImportDocument() {
                 tipo: ""
             }))
             reset()
-
+            // refetchDocs()
+            // refetchDocsAlert()
         }).catch(async (erro) => {
             displayLounding.setDisplayReset()
-            const response: TipoDocRhDTO = erro.response.data
+            const response: TipoDocRhDTO = erro.response?.data
             stateImportDocExistente.setDados(response.tipo, response.doc, document)
             stateImportDocExistente.alterState()
         })
@@ -514,6 +562,8 @@ function ModalImportDocExistentes() {
             state.alterState()
             stateModalImport.alterState()
             displayLounding.setDisplayReset()
+            // refetchDocs()
+            // refetchDocsAlert()
         }).catch(async () => {
             displayLounding.setDisplayFailure("Não foi possivel fazer a substituição no momento!")
             await new Promise((resolve) => setTimeout(resolve, 1500));

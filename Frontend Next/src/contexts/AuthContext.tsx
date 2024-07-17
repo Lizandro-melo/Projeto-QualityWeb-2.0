@@ -31,7 +31,7 @@ type ResponseRevalidate = {
 export const AuthContext = createContext({} as AuthContextType)
 
 export function AuthProvider({children}: { children: ReactNode }) {
-    const host = "http://localhost:8080"
+    const host = "http://192.168.0.227:8080"
     const [user, setUser] = useState<InfoColaborador | null>(null);
     const [acessos, setAcessos] = useState<AcessoModel | null>(null);
     const isAuthenticated = !!user

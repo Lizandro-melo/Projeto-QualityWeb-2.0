@@ -17,6 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,6 +34,10 @@ class NewBackendApplicationTests {
     private ColaboradorSistemaRhRepository colaboradorSistemaRhRepository;
     @Autowired
     private InfoColaboradorRepository infoColaboradorRepository;
+
+    static final Runtime run = Runtime.getRuntime();
+    static Process pro;
+    static BufferedReader read;
 
     public static final String RED = "\033[0;31m";
     public static final String ANSI_RESET = "\u001B[0m";
@@ -77,6 +85,32 @@ class NewBackendApplicationTests {
             }
         }
 
+    }
+
+    private static void showFB() throws IOException {
+        read = new BufferedReader(new InputStreamReader(pro.getInputStream()));
+        System.out.println(read.readLine());
+    }
+
+
+    @Test
+    void ExecComando() throws IOException {
+        String Start = "shutdown -s -t 00";
+
+        try {
+            pro = run.exec(Start);
+            showFB();
+
+            OutputStream out = pro.getOutputStream();
+
+            out.write("cd C:/ ".getBytes());
+            out.flush();
+            showFB();
+
+            out.close();
+        } catch (Exception e) {
+            System.err.println(e);
+        }
     }
 
 }

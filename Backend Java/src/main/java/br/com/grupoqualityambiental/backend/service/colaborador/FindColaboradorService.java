@@ -31,6 +31,10 @@ public class FindColaboradorService {
     private InfoEstagiarioColaboradorRepository infoEstagiarioColaboradorRepository;
     @Autowired
     private InfoMEIColaboradorRepository infoMEIColaboradorRepository;
+    @Autowired
+    private EmpresaColaboradorRepository empresaColaboradorRepository;
+    @Autowired
+    private SetorColaboradorRepository setorColaboradorRepository;
 
     public List<InfoColaboradorModel> getAllColaboradoresAtivos() {
         List<InfoColaboradorModel> listColaboradoresAtivos = new ArrayList<>();
@@ -73,5 +77,13 @@ public class FindColaboradorService {
             infoMEI = infoMEIColaboradorRepository.findById(idColaborador).get();
         }
         return new InfoColaboradorCompletoDTO(infoPessoais, contatos, contasBancarias, infoCLT, infoEstagiario, infoMEI);
+    }
+
+    public List<EmpresaColaboradorModel> getEmpresas(){
+        return empresaColaboradorRepository.findAll();
+    }
+
+    public List<SetorColaboradorModel> getSetor(){
+        return setorColaboradorRepository.findAll();
     }
 }

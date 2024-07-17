@@ -29,7 +29,7 @@ public class FindDocRhService {
             }
             long dias = ChronoUnit.DAYS.between(LocalDate.now(), docReferent.getDataVencimento());
             if (dias <= 60) {
-                listAlert.add(new DocExpirandoAlertRhDTO(docReferent, dias * -1));
+                listAlert.add(new DocExpirandoAlertRhDTO(docReferent, dias));
             }
         }
         return listAlert;
