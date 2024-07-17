@@ -13,7 +13,7 @@ export default function ContainerSystem({children}: ContainerSystemProps) {
         <div
             onClick={() => state.setBool(false)}
             className={cn("h-full w-[80%] rounded-r-md", !state.stateNavBar && "!w-[87%]")}>
-            <div className="flex justify-start w-full p-5 flex-col h-full">
+            <div className="flex justify-start w-full p-5 flex-col h-full relative overflow-hidden">
                 {children}
             </div>
         </div>

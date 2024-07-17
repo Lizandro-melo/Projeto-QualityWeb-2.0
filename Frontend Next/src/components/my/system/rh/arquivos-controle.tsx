@@ -13,7 +13,7 @@ import {
     stateLoundingGlobal, stateModalDocExistenteProps, stateModalImportDocExistenteRhGlobal,
     stateModalImportDocRhGlobal, stateModalProps
 } from "@/lib/globalStates";
-import {DocRhModels, SubstituirDocRhDTO, TipoDocRhDTO} from "@/lib/models";
+import {DocExpirandoAlertRhDTO, DocRhModels, SubstituirDocRhDTO, TipoDocRhDTO} from "@/lib/models";
 import {useForm} from "react-hook-form";
 import {cn} from "@/lib/utils";
 import {Label} from "@/components/ui/label";
@@ -81,33 +81,35 @@ function ArquivosReferents() {
         },
         enabled: !!colaborador?.fkAuth && !!host
     });
-    const {data: docsAlert, refetch: refetchDocsAlert} = useQuery<DocRhModels[]>({
+    const {data: docsAlert, refetch: refetchDocsAlert} = useQuery<DocExpirandoAlertRhDTO[] | null>({
         queryKey: ["docsAlert"],
         queryFn: async () => {
             try {
-                const response = await axios.get(`${host}/rh/find/doc/alert?id=${colaborador?.fkAuth}`, configToken);
-                return response.data.doc.map((doc: DocRhModels) => {
-                    switch (doc.tipo) {
+                const {data}: {
+                    data: DocExpirandoAlertRhDTO[]
+                } = await axios.get(`${host}/rh/find/doc/alert?id=${colaborador?.fkAuth}`, configToken).then((response) => response);
+                return data.map((docAlert) => {
+                    switch (docAlert?.doc?.tipo) {
                         case "IDENTIDADE":
-                            doc.tipo = "Identidade";
+                            docAlert.doc.tipo = "Identidade";
                             break;
                         case "TITULOELEITOR":
-                            doc.tipo = "Título de eleitor";
+                            docAlert.doc.tipo = "Título de eleitor";
                             break;
                         case "COMPROVANTERESIDENCIA":
-                            doc.tipo = "Comprovante de residencia";
+                            docAlert.doc.tipo = "Comprovante de residencia";
                             break;
                         case "EXAMECOMPLEMENTAR":
-                            doc.tipo = "Exame Complementar";
+                            docAlert.doc.tipo = "Exame Complementar";
                             break;
                         case "DECLARACAO":
-                            doc.tipo = "Declaração";
+                            docAlert.doc.tipo = "Declaração";
                             break;
                         case "CONTRATO":
-                            doc.tipo = "Contrato";
+                            docAlert.doc.tipo = "Contrato";
                             break;
                     }
-                    return doc;
+                    return docAlert;
                 });
             } catch (error) {
                 return null;
@@ -175,7 +177,10 @@ function ArquivosReferents() {
                                 pré-visualizalo</p>
                             <Button type="button"
                                     className="rounded-full w-[40px] h-[40px] p-[10px] hover:animate-spin-reload transition-all"
-                                    onClick={() => refetchDocs()}
+                                    onClick={() => {
+                                        refetchDocs()
+                                        refetchDocsAlert()
+                                    }}
                             >
                                 <RotateCw/>
                             </Button>
@@ -264,7 +269,7 @@ function ArquivosReferents() {
                         <ScrollArea
                             className="h-[35%] w-full rounded-md border relative overflow-y-scroll scrowInvivel">
                             <div className="p-3 absolute w-full">
-                                <h4 className="mb-4 text-sm font-medium leading-none">Alertas</h4>
+                                <h4 className="mb-4 text-sm font-medium leading-none">Documentos a vencer</h4>
                                 <Table>
                                     <TableHeader>
                                         <TableHead>
@@ -278,21 +283,22 @@ function ArquivosReferents() {
                                         </TableHead>
                                     </TableHeader>
                                     <TableBody>
-                                        {docs?.sort((a, b) => {
-                                            return a.apelido! >= b.apelido! ? 1 : -1;
-                                        }).map((doc: DocRhModels) => {
-                                            const fileName = `${doc.dir?.split("/")[4]}/${doc.dir?.split("/")[5]}`
+                                        {docsAlert?.sort((a, b) => {
+                                            return a.doc!.apelido! >= b.doc!.apelido! ? 1 : -1;
+                                        }).map((docAlert: DocExpirandoAlertRhDTO) => {
+                                            const fileName = `${docAlert.doc!.dir?.split("/")[4]}/${docAlert.doc!.dir?.split("/")[5]}`
                                             return (
                                                 <>
-                                                    <TableRow key={doc.id}
-                                                              className="hover:bg-stone-400 cursor-pointer"
+                                                    <TableRow key={docAlert.doc!.id}
+                                                              className="hover:bg-red-300 cursor-pointer"
                                                               title="Baixar" onClick={() => {
                                                         Router.push(`${host}/rh/find/download/arquivo?name=${fileName}`, "", {
                                                             scroll: true
                                                         })
                                                     }}>
-                                                        <TableCell>{doc.apelido}</TableCell>
-                                                        <TableCell>{doc.tipo}</TableCell>
+                                                        <TableCell>{docAlert.doc!.apelido}</TableCell>
+                                                        <TableCell>{docAlert.doc!.tipo}</TableCell>
+                                                        <TableCell>{docAlert.diasRestantes} dias</TableCell>
                                                     </TableRow>
                                                 </>
                                             )

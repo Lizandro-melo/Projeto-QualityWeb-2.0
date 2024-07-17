@@ -38,12 +38,29 @@ function LabelInputPadraoRoot({
         <div className={cn("flex flex-col gap-4", `w-[${width}%]`)}>
             <Label htmlFor={name}>{title}</Label>
             {!textArea && (
-                <Input {...register && {...register(name)}} id={name} name={name} type={type} required={required}
-                       onChange={change}
-                       value={value}/>
+                <>
+                    {register ? (
+                        <Input{...register(name)} id={name} name={name} type={type}
+                              required={required}
+                              value={value}/>
+                    ) : (
+                        <Input id={name} name={name} type={type}
+                               required={required}
+                               onChange={change}
+                               value={value}/>
+                    )}
+                </>
             )}
             {textArea && (
-                <Textarea onChange={change} {...register && {...register(name)}} id={name} name={name} value={value}/>
+                <>
+                    {register ? (
+                        <Textarea {...register(name)} id={name} name={name} value={value}/>
+                    ) : (
+                        <Textarea onChange={change} id={name} name={name} value={value}/>
+                    )}
+                </>
+
+
             )}
         </div>
     )

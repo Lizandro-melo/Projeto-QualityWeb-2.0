@@ -226,3 +226,4 @@ export const stateModalAnotacaoGlobal = create<stateModalProps>((set) => ({
         stateModal: !state.stateModal,
     }))
 }))
+

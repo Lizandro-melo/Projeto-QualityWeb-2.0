@@ -59,11 +59,14 @@ export default function Anotacoes() {
         idColaborador: ""
     })
     const state = stateModalAnotacaoGlobal<stateModalProps>(state => state)
+    const [stateDados, setStateDados] = useState(true);
 
 
     const fetchAnotacoes = async (): Promise<ResponseFindAnotacaoRhDTO | undefined> => {
         try {
-
+            if (!filtro.idColaborador) {
+                return
+            }
             const response = await axios.get(`${host}/rh/find/anotacao/filter?anotacao=${filtro.anotacao}&id=${filtro.idColaborador}&tipo=${filtro.tipo}&status=${filtro.status}&dataInicio=${filtro.dataInicio}&dataFim=${filtro.dataFim}`, configToken).then((response) => {
                 const anotacoes: ResponseFindAnotacaoRhDTO = response.data
                 return anotacoes
@@ -74,7 +77,7 @@ export default function Anotacoes() {
         }
     };
 
-    const {data: responseAnotacao, refetch} = useQuery({
+    const {data: responseAnotacao, refetch: refetchResponseAnotacao} = useQuery({
         queryKey: ["Anotacoes", filtro],
         queryFn: fetchAnotacoes,
         enabled:
@@ -102,16 +105,16 @@ export default function Anotacoes() {
     }
 
     useEffect(() => {
-        refetch()
+        refetchResponseAnotacao()
     }, [filtro, queryClient, colaborador])
 
     return (
         <>
-            <ModalAnotacaoView refreshNotas={refetch}/>
+            <ModalAnotacaoView refreshNotas={refetchResponseAnotacao}/>
             <ListColaboradoresAtivos tipoSelect/>
             <ContainerSystem>
                 <>
-                    <div className="flex w-full">
+                    <div className="flex w-full relative">
                         <div>
 
                             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -231,6 +234,12 @@ export default function Anotacoes() {
 
                                         </span>
                                         </TableHead>
+                                        <TableHead className=" hover:bg-slate-100">
+                        <span className=" flex gap-2 relative items-center justify-center">
+                            Motivo
+
+                                        </span>
+                                        </TableHead>
 
                                         <TableHead className="hover:bg-slate-100">
                                                 <span className="flex gap-2 relative items-center justify-center">
@@ -285,6 +294,13 @@ export default function Anotacoes() {
                                                             <span
                                                                 className="text-center flex items-center justify-center"
                                                             >
+                                                            {anotacao.motivo}
+                                                            </span>
+                                                </TableCell>
+                                                <TableCell>
+                                                            <span
+                                                                className="text-center flex items-center justify-center"
+                                                            >
                                                             {formatarDataComum(anotacao.dataInicio)}
                                                             </span>
                                                 </TableCell>
@@ -300,8 +316,94 @@ export default function Anotacoes() {
                                     })}
                                 </TableBody>
                             </Table>
+
                         </div>
                     </div>
+                    {responseAnotacao?.dadosContabilizados && (
+                        <div
+                            className={cn("flex items-end absolute -right-[250px] bottom-5 transition-all opacity-70", stateDados && "!right-0 opacity-100")}>
+                            <Button className="relative bottom-0 rounded-l-full" type="button"
+                                    onClick={() => setStateDados(!stateDados)}>
+
+                                {stateDados ? (
+                                    <>
+                                        Esconder os dados
+                                    </>
+                                ) : (
+                                    <>
+                                        Visualizar os dados
+                                    </>
+                                )}
+                            </Button>
+                            <div
+                                className={cn(" shadow-2xl rounded-lg bg-stone-200 border w-[250px] ")}>
+
+                                <ul className="text-sm p-3 flex flex-col gap-1">
+                                    <li className="flex justify-between">
+                                        <span>Advertencia escrita</span>
+                                        <span>{responseAnotacao?.dadosContabilizados.advEscrita!}</span>
+                                    </li>
+                                    <hr className="border border-b-stone-400"/>
+                                    <li className="flex justify-between">
+                                        <span>Advertencia verbal</span>
+                                        <span>{responseAnotacao?.dadosContabilizados.advVerbal!}</span>
+                                    </li>
+                                    <hr className="border border-b-stone-400"/>
+                                    <li className="flex justify-between">
+                                        <span>Atestado de horas</span>
+                                        <span>{responseAnotacao?.dadosContabilizados.atestadoHora!}</span>
+                                    </li>
+                                    <hr className="border border-b-stone-400"/>
+                                    <li className="flex justify-between">
+                                        <span>Atestado de dias</span>
+                                        <span>{responseAnotacao?.dadosContabilizados.atestado!}</span>
+                                    </li>
+                                    <hr className="border border-b-stone-400"/>
+                                    <li className="flex justify-between">
+                                        <span>Licença</span>
+                                        <span>{responseAnotacao?.dadosContabilizados.licenca!}</span>
+                                    </li>
+                                    <hr className="border border-b-stone-400"/>
+                                    <li className="flex justify-between">
+                                        <span>Ferias</span>
+                                        <span>{responseAnotacao?.dadosContabilizados.ferias!}</span>
+                                    </li>
+                                    <hr className="border border-b-stone-400"/>
+                                    <li className="flex justify-between">
+                                        <span>Quantidade de faltas</span>
+                                        <span>{responseAnotacao?.dadosContabilizados.faltou!}</span>
+                                    </li>
+                                    <hr className="border border-b-stone-400"/>
+                                    <li className="flex justify-between">
+                                        <span>Quantidade de atrasos</span>
+                                        <span>{responseAnotacao?.dadosContabilizados.atrasos!}</span>
+                                    </li>
+                                    <hr className="border border-b-stone-400"/>
+                                    <li className="flex justify-between">
+                                        <span>Quantidade de suspensão</span>
+                                        <span>{responseAnotacao?.dadosContabilizados.suspensao!}</span>
+                                    </li>
+                                    <hr className="border border-b-stone-400"/>
+                                    <li className="flex justify-between">
+                                        <span>Tempo de atraso</span>
+                                        <span>{responseAnotacao?.dadosContabilizados.atrasoTempo!} min</span>
+                                    </li>
+                                    <hr className="border border-b-stone-400"/>
+                                    <li className="flex justify-between">
+                                        <span>Banco de horas</span>
+                                        <span>{responseAnotacao?.dadosContabilizados.bancoHoras!} min</span>
+                                    </li>
+                                    <hr className="border border-b-stone-400"/>
+                                    <li className="flex justify-between">
+                                        <span>Horas extras</span>
+                                        <span>{responseAnotacao?.dadosContabilizados.horasExtras!} min</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    )}
+
                 </>
 
 
