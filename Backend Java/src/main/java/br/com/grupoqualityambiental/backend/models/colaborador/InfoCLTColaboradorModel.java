@@ -1,6 +1,7 @@
 package br.com.grupoqualityambiental.backend.models.colaborador;
 
 
+import br.com.grupoqualityambiental.backend.dto.auth.RegisterDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,4 +27,11 @@ public class InfoCLTColaboradorModel {
     @JoinColumn(name = "fk_setor")
     @OneToOne
     private SetorColaboradorModel setor;
+
+    public InfoCLTColaboradorModel(RegisterDTO register, Integer id) {
+        this.id = id;
+        setor = register.setor();
+        empresa = register.empresa();
+        dataAdmissao = register.dataAdmissao();
+    }
 }

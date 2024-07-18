@@ -35,4 +35,9 @@ public class UpdateDocRhService {
         docRhRepository.save(docs.docSubstituto());
         return "Documento substituido com sucesso!";
     }
+
+    public String deleteDoc(Integer id) {
+        docRhRepository.deleteById(id.longValue());
+        return "Documento deletado com sucesso!";
+    }
 }

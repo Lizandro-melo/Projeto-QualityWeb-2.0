@@ -1,5 +1,6 @@
 package br.com.grupoqualityambiental.backend.models.colaborador;
 
+import br.com.grupoqualityambiental.backend.dto.auth.RegisterDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,5 +26,12 @@ public class InfoMEIColaboradorModel {
     private EmpresaColaboradorModel empresa;
     @JoinColumn(name = "fk_setor")
     @OneToOne
-    private EmpresaColaboradorModel setor;
+    private SetorColaboradorModel setor;
+
+    public InfoMEIColaboradorModel(RegisterDTO register, int i) {
+        this.id = i;
+        setor = register.setor();
+        empresa = register.empresa();
+        dataAdmissao = register.dataAdmissao();
+    }
 }

@@ -3,7 +3,7 @@ import {Input} from "@/components/ui/input";
 import {FieldValues, UseFormRegister} from "react-hook-form";
 import {cn} from "@/lib/utils";
 import {Textarea} from "@/components/ui/textarea";
-import {ChangeEvent} from "react";
+import {ChangeEvent, HTMLAttributes} from "react";
 
 
 export const LabelInputPadrao = {
@@ -12,7 +12,7 @@ export const LabelInputPadrao = {
 
 
 type LabelInputPadraoRootProps = {
-    type?: "text" | "password" | "number" | "date",
+    type?: "text" | "password" | "number" | "date" | "email",
     name: string,
     title: string,
     register?: UseFormRegister<FieldValues>
@@ -20,7 +20,9 @@ type LabelInputPadraoRootProps = {
     textArea?: boolean
     required?: boolean
     value?: string
-    change?: (e: ChangeEvent<any>) => void
+    change?: (e: ChangeEvent<any>) => void,
+    classNames?: string
+    disabled?: boolean
 }
 
 function LabelInputPadraoRoot({
@@ -32,34 +34,37 @@ function LabelInputPadraoRoot({
                                   textArea,
                                   required,
                                   value,
-                                  change
+                                  change,
+                                  classNames,
+                                  disabled
                               }: LabelInputPadraoRootProps) {
     return (
-        <div className={cn("flex flex-col gap-4", `w-[${width}%]`)}>
+        <div className={cn("flex flex-col gap-3", `w-[${width}%]`)}>
             <Label htmlFor={name}>{title}</Label>
             {!textArea && (
                 <>
                     {register ? (
-                        <Input{...register(name)} id={name} name={name} type={type}
-                              required={required}
-                              value={value}/>
-                    ) : (
-                        <Input id={name} name={name} type={type}
-                               required={required}
-                               onChange={change}
-                               value={value}/>
-                    )}
+                        <Input {...register(name)} id={name} name={name} type={type}
+                               required={required} disabled={disabled}
+                               value={value} className={classNames}/>
+                    ) : (<Input id={name} name={name} type={type}
+                                required={required}
+                                onChange={change}
+                                disabled={disabled}
+                                value={value} className={classNames}/>)}
+
                 </>
             )}
             {textArea && (
                 <>
                     {register ? (
-                        <Textarea {...register(name)} id={name} name={name} value={value}/>
+                        <Textarea {...register(name)} id={name} name={name}
+                                  value={value} className={classNames} disabled={disabled}/>
                     ) : (
-                        <Textarea onChange={change} id={name} name={name} value={value}/>
+                        <Textarea onChange={change} id={name} name={name}
+                                  value={value} className={classNames} disabled={disabled}/>
                     )}
                 </>
-
 
             )}
         </div>

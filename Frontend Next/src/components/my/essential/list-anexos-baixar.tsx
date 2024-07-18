@@ -34,7 +34,7 @@ export default function ListAnexosBaixar({list, height}: List) {
                         <a key={i}
                            onClick={async () => {
                                displayLounding.setDisplayLounding();
-                               await axios.get(`${host}/suporte/find/download/arquivo?name=${fileName}`, configToken).then(() => {
+                               await axios.get(`${host}/suporte/find/download/arquivo?name=${fileName}`).then(() => {
                                    displayLounding.setDisplaySuccess("Baixado");
                                    location.href = `${host}/suporte/find/download/arquivo?name=${fileName}`
                                    displayLounding.setDisplayReset();

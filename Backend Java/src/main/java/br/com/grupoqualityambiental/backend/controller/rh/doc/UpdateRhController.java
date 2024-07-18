@@ -31,4 +31,11 @@ public class UpdateRhController {
     public ResponseEntity<String> subDocRh(@RequestBody SubstituirDocRhDTO docs) {
         return ResponseEntity.ok(updateRhService.substituirDocExistente(docs));
     }
+
+    @DeleteMapping(
+            path = "delete/doc"
+    )
+    public ResponseEntity<String> deleteDoc(@RequestParam("id") Integer id) {
+        return ResponseEntity.ok(updateRhService.deleteDoc(id));
+    }
 }

@@ -7,12 +7,14 @@ import br.com.grupoqualityambiental.backend.dto.auth.RegisterDTO;
 import br.com.grupoqualityambiental.backend.dto.auth.RevalidateResponseDTO;
 import br.com.grupoqualityambiental.backend.dto.essential.ResponseMensagemDTO;
 import br.com.grupoqualityambiental.backend.enumerated.colaborador.AuthColaboradorEnum;
+import br.com.grupoqualityambiental.backend.exception.IntegridadeDadosException;
 import br.com.grupoqualityambiental.backend.models.acesso.AcessoModel;
 import br.com.grupoqualityambiental.backend.models.colaborador.AuthColaboradorModel;
 import br.com.grupoqualityambiental.backend.models.colaborador.InfoColaboradorModel;
 import br.com.grupoqualityambiental.backend.repository.acesso.AcessoRepository;
 import br.com.grupoqualityambiental.backend.repository.colaborador.AuthColaboradorRepository;
 import br.com.grupoqualityambiental.backend.repository.colaborador.InfoColaboradorRepository;
+import br.com.grupoqualityambiental.backend.service.auth.AuthorizationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +28,8 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationController {
     @Autowired
     private AuthenticationManager authenticationManager;
+    @Autowired
+    private AuthorizationService authorizationService;
     @Autowired
     private AuthColaboradorRepository authColaboradorRepository;
     @Autowired
@@ -61,17 +65,11 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<Object> register(@RequestBody @Valid RegisterDTO data) {
-        RegisterDTO loginLizandro = new RegisterDTO("josé melo", "415263", AuthColaboradorEnum.USER, false);
-        if (this.authColaboradorRepository.findByLogin(loginLizandro.login().toLowerCase()) != null)
-            return ResponseEntity.badRequest().body(new ResponseMensagemDTO("Login já existente em nosso banco de dados!"));
-
-        String encryptedPassword = new BCryptPasswordEncoder().encode(loginLizandro.password());
-        AuthColaboradorModel newUser = new AuthColaboradorModel(loginLizandro.login(), encryptedPassword,
-                loginLizandro.role(), loginLizandro.alterPass());
-
-        this.authColaboradorRepository.save(newUser);
-
-        return ResponseEntity.ok().build();
+        try {
+            return ResponseEntity.ok(authorizationService.register(data));
+        } catch (IntegridadeDadosException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping(path = "/revalidate")

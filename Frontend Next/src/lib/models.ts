@@ -276,4 +276,15 @@ export type ResponseFindAnotacaoRhDTO = {
     dadosContabilizados: ContabilizacaoDadosAnotacao
 }
 
-
+export type RegisterDTO = {
+    nomeCompleto: string
+    login: string
+    email: string
+    nCelular: string
+    cep: string
+    dataNascimento: string
+    tipo: string
+    dataAdmissao: string
+    empresa: EmpresaColaboradorModel
+    setor: SetorColaboradorModel
+}
