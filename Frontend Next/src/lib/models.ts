@@ -6,9 +6,9 @@ export type InfoColaborador = {
     cpf: string
     rg: string
     emissoRg: string
-    nCarteira: string
+    nuCarteira: string
     pis: string
-    nTitulo: string
+    nuTitulo: string
     nomeMaterno: string
     cep: string
     dataNascimento: string
@@ -177,20 +177,20 @@ export type DocExpirandoAlertRhDTO = {
 }
 
 export type ContatoColaboradorModel = {
-    id: number
-    colaboradorReferent: InfoColaborador
-    tipo: string
-    nCelular: string
-    nfixo: string
-    email: string
+    id?: number
+    colaboradorReferent?: InfoColaborador
+    tipo?: string
+    nuCelular?: string
+    nuFixo?: string
+    email?: string
 }
 
 export type ContaBancariaColaboradorModel = {
-    id: number
-    colaboradorReferent: InfoColaborador
-    nomeBanco: string
-    numeroConta: string
-    numeroAgencia: string
+    id?: number
+    colaboradorReferent?: InfoColaborador
+    nomeBanco?: string
+    numeroConta?: string
+    numeroAgencia?: string
 }
 
 export type InfoCLTColaboradorModel = {
@@ -220,12 +220,22 @@ export type InfoMEIColaboradorModel = {
 }
 
 export type InfoColaboradorCompletoDTO = {
+    authColaborador: AuthColaboradorModel
     infoPessoais: InfoColaborador
     contatos: ContatoColaboradorModel[]
     contasBancarias: ContaBancariaColaboradorModel[]
     infoCLT: InfoCLTColaboradorModel
     infoEstagiario: InfoEstagiarioColaboradorModel
     infoMEI: InfoMEIColaboradorModel
+}
+
+export type AuthColaboradorModel = {
+    id: number
+    login: string
+    password: string
+    status: boolean
+    role: string
+    alterPass: boolean
 }
 
 export type ContabilizacaoDadosAnotacao = {

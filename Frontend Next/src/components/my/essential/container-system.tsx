@@ -12,7 +12,7 @@ export default function ContainerSystem({children}: ContainerSystemProps) {
     return (
         <div
             onClick={() => state.setBool(false)}
-            className={cn("h-full w-[80%] rounded-r-md", !state.stateNavBar && "!w-[87%]")}>
+            className={cn("h-full w-[80%] rounded-r-md relative", !state.stateNavBar && "!w-[87%]")}>
             <div className="flex justify-start w-full p-5 flex-col h-full">
                 {children}
             </div>

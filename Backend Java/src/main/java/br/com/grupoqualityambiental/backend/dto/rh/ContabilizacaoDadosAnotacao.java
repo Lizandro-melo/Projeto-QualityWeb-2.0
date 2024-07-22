@@ -28,11 +28,15 @@ public class ContabilizacaoDadosAnotacao {
         float totalHorasPositivo = 0F;
         float totalHorasNegativo = 0F;
         for (AnotacaoRhModels anotacao : anotacoes) {
-            if (anotacao.getBancoPositivo() > 0) {
-                totalHorasPositivo += anotacao.getBancoPositivo();
+            if (anotacao.getBancoPositivo() != null) {
+                if (anotacao.getBancoPositivo() > 0F) {
+                    totalHorasPositivo += anotacao.getBancoPositivo();
+                }
             }
-            if (anotacao.getBancoNegativo() > 0) {
-                totalHorasNegativo += anotacao.getBancoNegativo();
+            if (anotacao.getBancoNegativo() != null) {
+                if (anotacao.getBancoNegativo() > 0F) {
+                    totalHorasNegativo += anotacao.getBancoNegativo();
+                }
             }
             if (anotacao.getAtestado()) {
                 this.atestado++;
@@ -64,9 +68,12 @@ public class ContabilizacaoDadosAnotacao {
             if (anotacao.getAtraso()) {
                 this.atrasos++;
             }
-            if (anotacao.getAtrasoTempo() > 0) {
-                this.atrasoTempo += anotacao.getAtrasoTempo();
+            if (anotacao.getAtrasoTempo() != null) {
+                if (anotacao.getAtrasoTempo() > 0) {
+                    this.atrasoTempo += anotacao.getAtrasoTempo();
+                }
             }
+
         }
         bancoHoras = totalHorasPositivo - totalHorasNegativo;
     }

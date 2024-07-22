@@ -25,10 +25,10 @@ public class InfoColaboradorModel {
     @Column(name = "emissor_rg")
     private String emissoRg;
     @Column(name = "n_cart_trab")
-    private String nCarteira;
+    private String nuCarteira;
     private String pis;
     @Column(name = "n_titulo_eleitor")
-    private String nTitulo;
+    private String nuTitulo;
     @Column(name = "nome_mae")
     private String nomeMaterno;
     private String cep;

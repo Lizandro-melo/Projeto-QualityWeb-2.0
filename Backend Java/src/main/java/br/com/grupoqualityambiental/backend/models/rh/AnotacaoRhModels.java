@@ -4,6 +4,7 @@ package br.com.grupoqualityambiental.backend.models.rh;
 import br.com.grupoqualityambiental.backend.enumerated.colaborador.TipoColaboradorEnum;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.time.LocalDate;
 
@@ -34,7 +35,7 @@ public class AnotacaoRhModels {
     @Column(name = "adv_verbal")
     private Boolean advVerbal;
     @Column(name = "hora_extra")
-    private Float horaExtra;
+    private Float horaExtra = 0F;
     @Column(name = "data_inicio")
     private LocalDate dataInicio;
     @Column(name = "data_final")

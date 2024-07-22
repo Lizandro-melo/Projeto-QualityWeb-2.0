@@ -23,15 +23,15 @@ public class ContatoColaboradorModel {
     @Enumerated(EnumType.STRING)
     private ContatoColaboradorEnum tipo;
     @Column(name = "numero_celular")
-    private String nCelular;
+    private String nuCelular;
     @Column(name = "numero_fixo")
-    private String nFixo;
+    private String nuFixo;
     private String email;
 
-    public ContatoColaboradorModel(RegisterDTO register, InfoColaboradorModel infoColaborador){
+    public ContatoColaboradorModel(RegisterDTO register, InfoColaboradorModel infoColaborador) {
         colaboradorReferent = infoColaborador;
         tipo = ContatoColaboradorEnum.PESSOAL;
-        nCelular = register.nCelular();
+        nuCelular = register.nCelular();
         email = register.email();
     }
 

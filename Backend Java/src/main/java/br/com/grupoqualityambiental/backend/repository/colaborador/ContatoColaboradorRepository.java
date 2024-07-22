@@ -8,4 +8,7 @@ import java.util.List;
 
 public interface ContatoColaboradorRepository extends JpaRepository<ContatoColaboradorModel, InfoColaboradorModel> {
     List<ContatoColaboradorModel> findAllByColaboradorReferent_fkAuth(Integer idColaborador);
+
+
+    void deleteByColaboradorReferent_fkAuth(Long fkAuth);
 }

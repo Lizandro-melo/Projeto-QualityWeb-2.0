@@ -84,7 +84,7 @@ export default function ListColaboradoresAtivos({tipoSelect}: ListColaboradoresA
                 className={cn("h-full w-[20%] rounded-l-md shadow-lg transition-all", !state.stateNavBar && "!w-[13%]")}>
                 <div className="p-5 w-full h-[10%] bg-stone-200 rounded-tl-md shadow-md">
                     <h1 className={cn("text-xs", !state.stateNavBar && "text-center")}>
-                        Colaboradores Ativos
+                        Lista de colaboradores
                     </h1>
                 </div>
                 <hr/>

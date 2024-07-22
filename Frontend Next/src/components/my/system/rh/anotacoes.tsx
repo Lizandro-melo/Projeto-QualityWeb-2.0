@@ -334,14 +334,14 @@ export default function Anotacoes() {
                         </div>
                         {colaborador?.fkAuth && (
                             <Button onClick={() => stateModalCriar.alterState()} type="button"
-                                    className="absolute bottom-5 opacity-80 flex gap-3 group">
+                                    className="fixed bottom-5 opacity-80 flex gap-3 group">
                                 <Plus/>
                                 <span className="group-hover:block hidden">Nova anotação</span>
                             </Button>
                         )}
                         {responseAnotacao?.dadosContabilizados && (
                             <div
-                                className={cn("flex items-end absolute -right-[250px] bottom-5 transition-all opacity-70", stateDados && "!right-0 opacity-100")}>
+                                className={cn("flex items-end fixed -right-[250px] bottom-5 transition-all opacity-70", stateDados && "!right-0 opacity-100")}>
                                 <Button className="relative bottom-0 rounded-l-full" type="button"
                                         onClick={() => setStateDados(!stateDados)}>
 
@@ -639,6 +639,19 @@ export function ModalAnotacaoView({refreshNotas}: { refreshNotas: any }) {
                                             </li>
                                             <li className="flex gap-3 items-center">
                                                 <input type="checkbox" className="checked:w-4 checked:h-4 w-4 h-4"
+                                                       id="faltou"
+                                                       onChange={alterDados}
+                                                       name="faltou"
+                                                       checked={anotacao?.faltou}/>
+                                                <Label
+                                                    className="text-xs"
+                                                    htmlFor="faltou"
+                                                >
+                                                    Faltou
+                                                </Label>
+                                            </li>
+                                            <li className="flex gap-3 items-center">
+                                                <input type="checkbox" className="checked:w-4 checked:h-4 w-4 h-4"
                                                        id="licenca"
                                                        onChange={alterDados}
                                                        name="licenca"
@@ -709,6 +722,7 @@ export function ModalAnotacaoView({refreshNotas}: { refreshNotas: any }) {
                                                         <option value="Advertência verbal">Advertência verbal</option>
                                                         <option value="Advertência escrita">Advertência escrita</option>
                                                         <option value="Atraso">Atraso</option>
+                                                        <option value="Avulsa">Avulsa</option>
                                                     </select>
                                                 </div>
                                             </li>
@@ -730,7 +744,7 @@ export function ModalAnotacaoView({refreshNotas}: { refreshNotas: any }) {
                                                 <LabelInputPadrao.Root name="horaExtra" title={"Hora extra"}
                                                                        change={alterAnotacao} width={100}
                                                                        type="number"
-                                                                       required
+
                                                                        value={anotacao?.horaExtra!.toString()}/>
                                             </li>
 
@@ -738,7 +752,7 @@ export function ModalAnotacaoView({refreshNotas}: { refreshNotas: any }) {
                                                 <LabelInputPadrao.Root name="bancoPositivo" title={"Banco positivo"}
                                                                        change={alterAnotacao} width={100}
                                                                        type="number"
-                                                                       required
+
                                                                        value={anotacao?.bancoPositivo!.toString()}/>
                                             </li>
 
@@ -754,10 +768,12 @@ export function ModalAnotacaoView({refreshNotas}: { refreshNotas: any }) {
                                                 <LabelInputPadrao.Root name="dataInicio" title={"Data de inicio"}
                                                                        change={alterAnotacao} width={50}
                                                                        type="date"
+                                                                       required
                                                                        value={anotacao?.dataInicio}/>
                                                 <LabelInputPadrao.Root name="dataFinal" title={"Data de final"}
                                                                        change={alterAnotacao} width={50}
                                                                        type="date"
+                                                                       required
                                                                        value={anotacao?.dataFinal}/>
                                             </li>
                                             {anotacao?.advEscrita && (
@@ -766,6 +782,7 @@ export function ModalAnotacaoView({refreshNotas}: { refreshNotas: any }) {
                                                                            title={"Data da adv escrita"}
                                                                            change={alterAnotacao} width={100}
                                                                            type="date"
+                                                                           required
                                                                            value={anotacao?.advEscritaData}/>
                                                 </li>
                                             )}
@@ -1018,23 +1035,16 @@ export function ModalAnotacaoView({refreshNotas}: { refreshNotas: any }) {
 
 export function ModalAnotacaoCriar({refreshNotas}: { refreshNotas: any }) {
 
-    const queryClient = useQueryClient();
     const stateModalCriar = stateModalAnotacaoCriarGlobal<stateModalProps>(state => state)
     const {colaborador} = colaboradorSelectGlobal<colaboradorSelectGlobalProps>((state: any) => state);
-    const anotacaoSelect = anotacaoSelectGlobal<AnotacaoSelectGlobalProps>((state: any) => state);
-    const {register, handleSubmit} = useForm()
-    const [anotacao, setAnotacao] = useState<AnotacaoRhModels>()
-    const [modo, setModo] = useState(false)
+    const {register, handleSubmit, reset} = useForm()
     const [anexoListItens, setAnexoListItens] = useState<File[]>([]);
 
-    const {host, configToken} = useContext(AuthContext)
+    const {host, configToken, user} = useContext(AuthContext)
     const displayLounding = stateLoundingGlobal<stateLoundingGlobalProps>((state: any) => state)
 
-    useEffect(() => {
-        setAnotacao(anotacaoSelect.anotacao!)
-    }, [anotacaoSelect.anotacao]);
 
-    const sendAnotacaoEditada = async () => {
+    const sendAnotacaoEditada = async (data: any) => {
         displayLounding.setDisplayLounding()
         let updatedAnexos: string[] = [];
         if (anexoListItens.length !== 0) {
@@ -1042,89 +1052,37 @@ export function ModalAnotacaoCriar({refreshNotas}: { refreshNotas: any }) {
                 updatedAnexos = await updateFile();
             } catch {
                 displayLounding.setDisplayFailure("Falha na tentativa de enviar os documentos. Tente novamente!");
-                await new Promise((resolve) => setTimeout(resolve, 1000));
+                await new Promise((resolve) => setTimeout(resolve, 1500));
                 displayLounding.setDisplayReset();
                 return;
             }
         }
-
         const anotacaoRequest: AnotacaoRhModels = {
-            ...anotacao!,
-            anexo: updatedAnexos.length === 0 ? anotacao?.anexo! : JSON.stringify(updatedAnexos),
-        }
-        if (JSON.stringify(anotacaoSelect.anotacao) === JSON.stringify(anotacaoRequest)) {
-            displayLounding.setDisplayFailure("Não houve nenhuma alteração!")
-            await new Promise(resolve => setTimeout(resolve, 1500))
-            displayLounding.setDisplayReset()
-            setModo(false)
-            return
+            ...data!,
+            responsavel: user?.fkAuth,
+            colaboradorReferent: colaborador?.fkAuth,
+            anexo: updatedAnexos.length === 0 ? null : JSON.stringify(updatedAnexos),
+            tipoAnotacao: colaborador?.tipo,
+            horaExtra: data.horaExtra ? data.horaExtra : 0,
+            bancoPositivo: data.bancoPositivo ? data.bancoPositivo : 0,
+            bancoNegativo: data.bancoNegativo ? data.bancoNegativo : 0,
+            atrasoTempo: data.atrasoTempo ? data.atrasoTempo : 0,
         }
         await new Promise(resolve => setTimeout(resolve, 500))
-        await axios.put(`${host}/rh/update/anotacao/atualizar`, anotacaoRequest, configToken).then(async (response) => {
+        await axios.post(`${host}/rh/create/anotacao`, anotacaoRequest, configToken).then(async (response) => {
             displayLounding.setDisplaySuccess(response.data)
-            await new Promise(resolve => setTimeout(resolve, 1500))
+            await new Promise(resolve => setTimeout(resolve, 2000))
             displayLounding.setDisplayReset()
-            setModo(false)
-            stateModalCriar.alterState()
             refreshNotas()
+            stateModalCriar.alterState()
+            reset()
             setAnexoListItens([])
         }).catch(async (error) => {
-            displayLounding.setDisplayFailure("Não foi possivel atualizar a anotação")
-            await new Promise(resolve => setTimeout(resolve, 1500))
+            displayLounding.setDisplayFailure(error.response?.data)
+            await new Promise(resolve => setTimeout(resolve, 2000))
             displayLounding.setDisplayReset()
         })
     };
-
-    const inativarNota = async () => {
-        displayLounding.setDisplayLounding()
-        await new Promise(resolve => setTimeout(resolve, 500))
-        await axios.delete(`${host}/rh/update/anotacao/inativar?id=${anotacao?.id}`, configToken).then(async (response) => {
-            displayLounding.setDisplaySuccess(response.data)
-            await new Promise(resolve => setTimeout(resolve, 1500))
-            displayLounding.setDisplayReset()
-            setModo(false)
-            stateModalCriar.alterState()
-            refreshNotas()
-        }).catch(async (error) => {
-            displayLounding.setDisplayFailure("Não foi possivel inativar a anotação")
-            await new Promise(resolve => setTimeout(resolve, 1500))
-            displayLounding.setDisplayReset()
-        })
-    }
-
-    const reativarNota = async () => {
-        displayLounding.setDisplayLounding()
-        await new Promise(resolve => setTimeout(resolve, 500))
-        await axios.get(`${host}/rh/update/anotacao/reativar?id=${anotacao?.id}`, configToken).then(async (response) => {
-            displayLounding.setDisplaySuccess(response.data)
-            await new Promise(resolve => setTimeout(resolve, 1500))
-            displayLounding.setDisplayReset()
-            setModo(false)
-            stateModalCriar.alterState()
-            refreshNotas()
-        }).catch(async (error) => {
-            displayLounding.setDisplayFailure("Não foi possivel inativar a anotação")
-            await new Promise(resolve => setTimeout(resolve, 1500))
-            displayLounding.setDisplayReset()
-        })
-    }
-
-    const alterAnotacao = (e: ChangeEvent<any>) => {
-        const {name, value} = e.target
-        setAnotacao((prevState: any) => ({
-            ...prevState,
-            [name]: value
-        }))
-    }
-
-    const alterDados = (e: ChangeEvent<any>) => {
-        const {name, checked} = e.target
-
-        setAnotacao((prevState: any) => ({
-            ...prevState,
-            [name]: checked
-        }))
-    }
 
     const updateFile = async () => {
         let updatedAnexos: string[] = [];
@@ -1146,22 +1104,21 @@ export function ModalAnotacaoCriar({refreshNotas}: { refreshNotas: any }) {
     return (
         <>
             <Dialog open={stateModalCriar.stateModal} onOpenChange={() => {
-                setModo(false)
+                reset()
                 stateModalCriar.alterState()
             }}>
                 <DialogContent className="!max-w-[68rem] scale-[85%]">
                     <DialogHeader>
-                        <DialogTitle>Anotação {anotacao?.id}#</DialogTitle>
+                        <DialogTitle>Nova anotação</DialogTitle>
                         <form className="border rounded-xl p-3 w-full h-full relative pb-10"
                               onSubmit={handleSubmit(sendAnotacaoEditada)}>
                             <div className=" w-full flex flex-col gap-2">
                                 <div className={cn("flex flex-col gap-4 w-full")}>
                                     <Label htmlFor={"anotacao"}>Ocorrencia</Label>
                                     <Textarea className="text-xs" id={"anotacao"}
-                                              name={"anotacao"}
+                                              {...register("anotacao")}
                                               required
-                                              onChange={alterAnotacao}
-                                              value={anotacao?.anotacao} rows={3}/>
+                                              rows={3}/>
                                 </div>
                             </div>
                             <div className="flex w-full h-full py-5">
@@ -1170,10 +1127,10 @@ export function ModalAnotacaoCriar({refreshNotas}: { refreshNotas: any }) {
                                     <ul className="flex gap-2 flex-col py-2">
                                         <li className="flex gap-3 items-center">
                                             <input type="checkbox" className="checked:w-4 checked:h-4 w-4 h-4"
-                                                   onChange={alterDados}
                                                    id="atestado"
-                                                   name="atestado"
-                                                   checked={anotacao?.atestado}/>
+
+                                                   {...register("atestado")}
+                                            />
                                             <Label
                                                 className="text-xs"
                                                 htmlFor="atestado"
@@ -1182,12 +1139,12 @@ export function ModalAnotacaoCriar({refreshNotas}: { refreshNotas: any }) {
                                             </Label>
                                         </li>
                                         <li className="flex gap-3 items-center">
-                                            <input type="checkbox" className="checked:w-4 checked:h-4 w-4 h-4"
-                                                   onChange={alterDados}
+                                            <Input type="checkbox" className="checked:w-4 checked:h-4 w-4 h-4"
+                                                   {...register("atestadoHora")}
                                                    id="atestadoHora"
                                                    name="atestadoHora"
 
-                                                   checked={anotacao?.atestadoHora}/>
+                                            />
                                             <Label
                                                 className="text-xs"
                                                 htmlFor="atestadoHora"
@@ -1198,10 +1155,10 @@ export function ModalAnotacaoCriar({refreshNotas}: { refreshNotas: any }) {
                                         <li className="flex gap-3 items-center">
                                             <input type="checkbox" className="checked:w-4 checked:h-4 w-4 h-4"
                                                    id="ferias"
-                                                   onChange={alterDados}
+                                                   {...register("ferias")}
                                                    name="ferias"
 
-                                                   checked={anotacao?.ferias}/>
+                                            />
                                             <Label
                                                 className="text-xs"
                                                 htmlFor="ferias"
@@ -1212,10 +1169,10 @@ export function ModalAnotacaoCriar({refreshNotas}: { refreshNotas: any }) {
                                         <li className="flex gap-3 items-center">
                                             <input type="checkbox" className="checked:w-4 checked:h-4 w-4 h-4"
                                                    id="suspensao"
-                                                   name="suspensao"
-                                                   onChange={alterDados}
 
-                                                   checked={anotacao?.suspensao}/>
+                                                   {...register("suspensao")}
+
+                                            />
                                             <Label
                                                 className="text-xs"
                                                 htmlFor="suspensao"
@@ -1225,11 +1182,24 @@ export function ModalAnotacaoCriar({refreshNotas}: { refreshNotas: any }) {
                                         </li>
                                         <li className="flex gap-3 items-center">
                                             <input type="checkbox" className="checked:w-4 checked:h-4 w-4 h-4"
-                                                   id="licenca"
-                                                   onChange={alterDados}
-                                                   name="licenca"
+                                                   id="faltou"
 
-                                                   checked={anotacao?.licenca}/>
+                                                   {...register("faltou")}
+
+                                            />
+                                            <Label
+                                                className="text-xs"
+                                                htmlFor="faltou"
+                                            >
+                                                Faltou
+                                            </Label>
+                                        </li>
+                                        <li className="flex gap-3 items-center">
+                                            <input type="checkbox" className="checked:w-4 checked:h-4 w-4 h-4"
+                                                   id="licenca"
+                                                   {...register("licenca")}
+
+                                            />
                                             <Label
                                                 className="text-xs"
                                                 htmlFor="licenca"
@@ -1240,9 +1210,9 @@ export function ModalAnotacaoCriar({refreshNotas}: { refreshNotas: any }) {
                                         <li className="flex gap-3 items-center">
                                             <input type="checkbox" className="checked:w-4 checked:h-4 w-4 h-4"
                                                    id="advVerbal"
-                                                   onChange={alterDados}
+                                                   {...register("advVerbal")}
                                                    name="advVerbal"
-                                                   checked={anotacao?.advVerbal}/>
+                                            />
                                             <Label
                                                 className="text-xs"
                                                 htmlFor="advVerbal"
@@ -1254,9 +1224,9 @@ export function ModalAnotacaoCriar({refreshNotas}: { refreshNotas: any }) {
                                         <li className="flex gap-3 items-center">
                                             <input type="checkbox" className="checked:w-4 checked:h-4 w-4 h-4"
                                                    id="advEscrita"
-                                                   onChange={alterDados}
-                                                   name="advEscrita"
-                                                   checked={anotacao?.advEscrita}/>
+                                                   {...register("advEscrita")}
+
+                                            />
                                             <Label
                                                 className="text-xs"
                                                 htmlFor="advEscrita"
@@ -1267,9 +1237,8 @@ export function ModalAnotacaoCriar({refreshNotas}: { refreshNotas: any }) {
                                         <li className="flex gap-3 items-center">
                                             <input type="checkbox" className="checked:w-4 checked:h-4 w-4 h-4"
                                                    id="atraso"
-                                                   name="atraso"
-                                                   onChange={alterDados}
-                                                   checked={anotacao?.atraso}/>
+                                                   {...register("atraso")}
+                                            />
                                             <Label
                                                 className="text-xs"
                                                 htmlFor="atraso"
@@ -1281,10 +1250,8 @@ export function ModalAnotacaoCriar({refreshNotas}: { refreshNotas: any }) {
                                             <div className={cn("flex flex-col gap-4 w-full")}>
                                                 <Label htmlFor={"anotacao"}>Motivo</Label>
                                                 <select
-                                                    value={anotacao?.motivo}
+                                                    {...register("motivo")}
                                                     required
-                                                    name="motivo"
-                                                    onChange={alterAnotacao}
                                                     className="flex h-9 w-[50%] rounded-md border !border-stone-600 border-Input bg-background px-3 py-2 text-xs ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50">
                                                     <option value="">Registre um motivo</option>
                                                     <option value="Atestado dias">Atestado dias</option>
@@ -1295,18 +1262,19 @@ export function ModalAnotacaoCriar({refreshNotas}: { refreshNotas: any }) {
                                                     <option value="Advertência verbal">Advertência verbal</option>
                                                     <option value="Advertência escrita">Advertência escrita</option>
                                                     <option value="Atraso">Atraso</option>
+                                                    <option value="Avulsa">Avulsa</option>
                                                 </select>
                                             </div>
                                         </li>
-                                        {anotacao?.atraso && (
-                                            <li className="flex gap-2 flex-col">
-                                                <LabelInputPadrao.Root name="atrasoTempo" title={"Tempo de atraso"}
-                                                                       change={alterAnotacao} width={50}
-                                                                       type="number"
-                                                                       required
-                                                                       value={anotacao?.atrasoTempo!.toString()}/>
-                                            </li>
-                                        )}
+
+                                        <li className="flex gap-2 flex-col">
+                                            <LabelInputPadrao.Root name="atrasoTempo" title={"Tempo de atraso"}
+                                                                   width={50}
+                                                                   register={register}
+                                                                   type="number"
+                                            />
+                                        </li>
+
                                     </ul>
                                 </div>
                                 <div className="text-sm w-[50%] h-full flex flex-col gap-2">
@@ -1314,63 +1282,69 @@ export function ModalAnotacaoCriar({refreshNotas}: { refreshNotas: any }) {
 
                                         <li className="flex gap-2 flex-col">
                                             <LabelInputPadrao.Root name="horaExtra" title={"Hora extra"}
-                                                                   change={alterAnotacao} width={100}
+                                                                   width={100}
+                                                                   register={register}
                                                                    type="number"
-                                                                   required
-                                                                   value={anotacao?.horaExtra!.toString()}/>
+
+                                            />
                                         </li>
 
                                         <li className="flex gap-2 flex-col">
                                             <LabelInputPadrao.Root name="bancoPositivo" title={"Banco positivo"}
-                                                                   change={alterAnotacao} width={100}
+                                                                   width={100}
+                                                                   register={register}
                                                                    type="number"
-                                                                   required
-                                                                   value={anotacao?.bancoPositivo!.toString()}/>
+
+                                            />
                                         </li>
 
                                         <li className="flex gap-2 flex-col">
                                             <LabelInputPadrao.Root name="bancoNegativo" title={"Banco negativo"}
-                                                                   change={alterAnotacao} width={100}
+                                                                   width={100}
+                                                                   register={register}
                                                                    type="number"
-                                                                   value={anotacao?.bancoNegativo!.toString()}/>
+                                            />
                                         </li>
 
 
                                         <li className="flex gap-2">
                                             <LabelInputPadrao.Root name="dataInicio" title={"Data de inicio"}
-                                                                   change={alterAnotacao} width={50}
+                                                                   width={50}
+                                                                   register={register}
                                                                    type="date"
-                                                                   value={anotacao?.dataInicio}/>
+                                                                   required
+                                            />
                                             <LabelInputPadrao.Root name="dataFinal" title={"Data de final"}
-                                                                   change={alterAnotacao} width={50}
+                                                                   width={50}
+                                                                   register={register}
                                                                    type="date"
-                                                                   value={anotacao?.dataFinal}/>
+                                                                   required
+                                            />
                                         </li>
-                                        {anotacao?.advEscrita && (
-                                            <li className="flex gap-2 flex-col">
-                                                <LabelInputPadrao.Root name="advEscritaData"
-                                                                       title={"Data da adv escrita"}
-                                                                       change={alterAnotacao} width={100}
-                                                                       type="date"
-                                                                       value={anotacao?.advEscritaData}/>
-                                            </li>
-                                        )}
+
+                                        <li className="flex gap-2 flex-col">
+                                            <LabelInputPadrao.Root name="advEscritaData"
+                                                                   title={"Data da adv escrita"}
+                                                                   width={100}
+                                                                   register={register}
+                                                                   type="date"
+                                            />
+                                        </li>
+
 
                                     </ul>
-                                    {(anotacao?.atestado || anotacao?.atestadoHora || anotacao?.advEscrita || anotacao?.licenca) && (
-                                        <ListAnexos list={anexoListItens} alterList={setAnexoListItens}/>
-                                    )}
+
+                                    <ListAnexos list={anexoListItens} alterList={setAnexoListItens}/>
+
                                 </div>
                             </div>
                             <div className="absolute bottom-2">
-                                <Button variant="destructive">
-                                    Enviar edição
+                                <Button variant="default">
+                                    Criar edição
                                 </Button>
                                 <Button variant="link" onClick={() => {
-                                    if (JSON.stringify(anotacaoSelect.anotacao) !== JSON.stringify(anotacao)) {
-                                        setAnotacao(anotacaoSelect.anotacao!)
-                                    }
-                                    setModo(false)
+                                    reset()
+                                    stateModalCriar.alterState()
                                 }}>
                                     Cancelar edição
                                 </Button>

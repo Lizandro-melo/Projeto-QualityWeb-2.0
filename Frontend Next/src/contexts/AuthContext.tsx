@@ -40,6 +40,7 @@ export function AuthProvider({children}: { children: ReactNode }) {
     const [configToken, setConfigToken] = useState<any>()
 
     useEffect(() => {
+        displayLounding.setDisplayLounding()
         const {'quality-token': token} = parseCookies()
         if (token) {
             setConfigToken({
@@ -47,7 +48,8 @@ export function AuthProvider({children}: { children: ReactNode }) {
                     'Authorization': `Bearer ${token}`
                 }
             })
-            axios.get(`${host}/auth/revalidate?token=${token}`).then((response) => {
+            axios.get(`${host}/auth/revalidate?token=${token}`).then(async (response) => {
+                displayLounding.setDisplaySuccess("Validado!")
                 const {data}: { data: ResponseRevalidate } = response
                 setCookie(undefined, "quality-user", JSON.stringify(data.user), {
                     maxAge: 60 * 60 * 24, // 1 dia
@@ -57,8 +59,13 @@ export function AuthProvider({children}: { children: ReactNode }) {
                 })
                 setUser(data.user)
                 setAcessos(data.acessos)
-            }).catch(() => {
+                await new Promise(resolve => setTimeout(resolve, 1500))
+                displayLounding.setDisplayReset()
+            }).catch(async () => {
+                displayLounding.setDisplayFailure("Efetue o login novamente!")
+                await new Promise(resolve => setTimeout(resolve, 1500))
                 disconnect()
+                displayLounding.setDisplayReset()
 
             })
         } else {

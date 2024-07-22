@@ -233,3 +233,38 @@ export const stateModalAnotacaoCriarGlobal = create<stateModalProps>((set) => ({
         stateModal: !state.stateModal,
     }))
 }))
+
+export type stateAlertDialogPromoverGlobalProps = {
+    titulo: string | null,
+    mensagem: string | null,
+    action?: any,
+    state: boolean
+    setState: () => void
+    data: string
+    setAlert: (titulo: string | null,
+               mensagens: string | null,
+               action: () => void) => void
+    setData: (data: string) => void
+}
+
+export const stateModalPromoverGlobal = create<stateAlertDialogPromoverGlobalProps>((set) => ({
+    titulo: null,
+    mensagem: null,
+    action: undefined,
+    state: false,
+    data: "",
+    setState: () => set((stateGlobal) => ({
+        state: !stateGlobal.state
+    })),
+    setAlert: (titulo: string | null,
+               mensagens: string | null,
+               action: any) => set((stateGlobal) => ({
+        titulo: titulo,
+        mensagem: mensagens,
+        action: action,
+        state: !stateGlobal.state,
+    })),
+    setData: (data: string) => set((stateGlobal) => ({
+        data: data
+    }))
+}))

@@ -53,15 +53,30 @@ public class FindColaboradorService {
     }
 
     public List<InfoColaboradorModel> findByFiltro(String nome, TipoColaboradorEnum tipo) {
+        List<InfoColaboradorModel> infoColaboradorModels = new ArrayList<>();
         if (Objects.equals(tipo, TipoColaboradorEnum.TODOS)) {
             return infoColaboradorRepository.findByNomeCompletoContainingIgnoreCase(nome);
         } else {
-            return infoColaboradorRepository.findByNomeCompletoContainingIgnoreCaseAndTipo(nome, tipo);
+            if (Objects.equals(tipo, TipoColaboradorEnum.DESLIGADO)) {
+                for (InfoColaboradorModel infoColaboradorModel : infoColaboradorRepository.findByNomeCompletoContainingIgnoreCase(nome)) {
+                    if (!authColaboradorRepository.findById(infoColaboradorModel.getFkAuth()).get().getStatus()) {
+                        infoColaboradorModels.add(infoColaboradorModel);
+                    }
+                }
+            } else {
+                for (InfoColaboradorModel infoColaboradorModel : infoColaboradorRepository.findByNomeCompletoContainingIgnoreCaseAndTipo(nome, tipo)) {
+                    if (authColaboradorRepository.findById(infoColaboradorModel.getFkAuth()).get().getStatus()) {
+                        infoColaboradorModels.add(infoColaboradorModel);
+                    }
+                }
+            }
+            return infoColaboradorModels;
         }
     }
 
     public InfoColaboradorCompletoDTO getAllInfoCompletasColaborador(Integer idColaborador) {
         InfoColaboradorModel infoPessoais = infoColaboradorRepository.findById(idColaborador.longValue()).get();
+        AuthColaboradorModel authColaborador = authColaboradorRepository.findById(idColaborador.longValue()).get();
         List<ContatoColaboradorModel> contatos = contatoColaboradorRepository.findAllByColaboradorReferent_fkAuth(idColaborador) == null ? null : contatoColaboradorRepository.findAllByColaboradorReferent_fkAuth(idColaborador);
         List<ContaBancariaColaboradorModel> contasBancarias = contaBancariaColaboradorRepository.findAllByColaboradorReferent_fkAuth(idColaborador) == null ? null : contaBancariaColaboradorRepository.findAllByColaboradorReferent_fkAuth(idColaborador);
         InfoCLTColaboradorModel infoCLT = null;
@@ -76,14 +91,14 @@ public class FindColaboradorService {
         if (infoMEIColaboradorRepository.findById(idColaborador).isPresent()) {
             infoMEI = infoMEIColaboradorRepository.findById(idColaborador).get();
         }
-        return new InfoColaboradorCompletoDTO(infoPessoais, contatos, contasBancarias, infoCLT, infoEstagiario, infoMEI);
+        return new InfoColaboradorCompletoDTO(authColaborador, infoPessoais, contatos, contasBancarias, infoCLT, infoEstagiario, infoMEI);
     }
 
-    public List<EmpresaColaboradorModel> getEmpresas(){
+    public List<EmpresaColaboradorModel> getEmpresas() {
         return empresaColaboradorRepository.findAll();
     }
 
-    public List<SetorColaboradorModel> getSetor(){
+    public List<SetorColaboradorModel> getSetor() {
         return setorColaboradorRepository.findAll();
     }
 }

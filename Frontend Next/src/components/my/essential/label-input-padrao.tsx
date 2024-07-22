@@ -15,7 +15,7 @@ type LabelInputPadraoRootProps = {
     type?: "text" | "password" | "number" | "date" | "email",
     name: string,
     title: string,
-    register?: UseFormRegister<FieldValues>
+    register?: UseFormRegister<any>
     width: number
     textArea?: boolean
     required?: boolean
@@ -39,7 +39,7 @@ function LabelInputPadraoRoot({
                                   disabled
                               }: LabelInputPadraoRootProps) {
     return (
-        <div className={cn("flex flex-col gap-3", `w-[${width}%]`)}>
+        <div className={cn("flex flex-col gap-3", width === 100 ? "w-full" : `w-[${width}%]`)}>
             <Label htmlFor={name}>{title}</Label>
             {!textArea && (
                 <>

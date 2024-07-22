@@ -2,7 +2,7 @@ import {NavBar} from "@/components/my/essential/nav-bar";
 import {ContainerMain} from "@/components/my/essential/container-main";
 import React, {useContext} from "react";
 import {AuthContext} from "@/contexts/AuthContext";
-import {Folder, Folders, UserPlus, UserSearch} from "lucide-react";
+import {BookUser, Folder, Folders, UserPlus, UserSearch} from "lucide-react";
 import Router from "next/router";
 import {Tickets} from "@/components/my/system/suporte/tickets";
 import {ContainerContext} from "@/components/my/essential/ContainerContext";
@@ -10,6 +10,7 @@ import {pageSelectProps, pageSelectRhGlobal} from "@/lib/globalStates";
 import ArquivosControle from "@/components/my/system/rh/arquivos-controle";
 import Cadastrar from "@/components/my/system/rh/cadastrar";
 import Anotacoes from "@/components/my/system/rh/anotacoes";
+import GestaoColaboradores from "@/components/my/system/rh/gestao-colaboradores";
 
 
 export default function Rh() {
@@ -22,7 +23,7 @@ export default function Rh() {
             <ContainerMain.Root>
                 <NavBar.Root>
                     <NavBar.Section title={"RH"} testeRole={acessos?.rolesRH.delegado}>
-                        <NavBar.Item icon={<UserSearch className="w-[20px]"/>} title={"Anotações"}
+                        <NavBar.Item icon={<BookUser className="w-[20px]"/>} title={"Anotações"}
                                      action={() => {
                                          Router.push("/rh")
                                          selectPage.setPage("Anotações")
@@ -53,6 +54,7 @@ export default function Rh() {
                     {selectPage.page === "Arquivos" && <ArquivosControle/>}
                     {selectPage.page === "Cadastro" && <Cadastrar/>}
                     {selectPage.page === "Anotações" && <Anotacoes/>}
+                    {selectPage.page === "listaColaboradores" && <GestaoColaboradores/>}
                 </ContainerContext.Root>
             </ContainerMain.Root>
         </>

@@ -56,4 +56,11 @@ public class FindColaboradorController {
     public List<SetorColaboradorModel> getSetores() {
         return findColaboradorService.getSetor();
     }
+
+    @GetMapping(
+            path = "/completo"
+    )
+    public InfoColaboradorCompletoDTO getCompleto(@RequestParam("id") Integer id) {
+        return findColaboradorService.getAllInfoCompletasColaborador(id);
+    }
 }
